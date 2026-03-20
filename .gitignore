@@ -1,0 +1,11 @@
+# Environment
+.env
+
+# Database volume
+db/data/
+
+# Node
+node_modules
+
+# OS
+.DS_Store
