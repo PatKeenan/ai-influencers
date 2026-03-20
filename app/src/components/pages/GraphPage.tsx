@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import * as d3 from "d3";
-import { Maximize2 } from "lucide-react";
+import { Maximize2, X } from "lucide-react";
 import graphData from "../../graph-data.json";
 import { DOMAINS, getDomColor, LAYER_LABEL_COLORS } from "../../lib/constants";
 import { useIsMobile } from "../../hooks/useIsMobile";
@@ -18,6 +18,7 @@ export function GraphPage() {
   const [hoveredEdge, setHoveredEdge] = useState<Edge | null>(null);
   const [dims, setDims] = useState({ w: 900, h: 580 });
   const [showFilters, setShowFilters] = useState(false);
+  const [visibleCounts, setVisibleCounts] = useState({ nodes: PEOPLE.length, edges: EDGES.length });
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -45,6 +46,7 @@ export function GraphPage() {
     const visEdges = EDGES.filter(
       (e) => visIds.has(e.source) && visIds.has(e.target),
     );
+    setVisibleCounts({ nodes: visNodes.length, edges: visEdges.length });
     const nodeData = visNodes.map((n) => ({ ...n }));
     const edgeData = visEdges.map((e) => ({ ...e }));
 
@@ -286,6 +288,21 @@ export function GraphPage() {
     return () => { sim.stop(); };
   }, [domFilters, layerFilter, dims, isMobile]);
 
+  useEffect(() => {
+    if (!svgRef.current) return;
+    const svg = d3.select(svgRef.current);
+    // Reset all nodes
+    svg.selectAll("g g g").select("circle").attr("filter", "url(#glow)");
+    // Highlight selected
+    if (selected) {
+      svg.selectAll("g g g").each(function(this: any, d: any) {
+        if (d.id === selected.id) {
+          d3.select(this).select("circle").attr("filter", "url(#strongGlow)");
+        }
+      });
+    }
+  }, [selected]);
+
   const sp = PEOPLE.find((p) => p.id === selected?.id);
   const spEdges = sp
     ? EDGES.filter((e) => e.source === sp.id || e.target === sp.id)
@@ -319,7 +336,7 @@ export function GraphPage() {
             </div>
           )}
           <div className="text-sm md:text-lg font-bold text-text-primary tracking-wide whitespace-nowrap font-mono">
-            {isMobile ? "AIE MAP" : "NETWORK GRAPH"} v0.3 · {PEOPLE.length} NODES · {EDGES.length} EDGES
+            {isMobile ? "AIE MAP" : "NETWORK GRAPH"} v0.3 · {visibleCounts.nodes}/{PEOPLE.length} NODES · {visibleCounts.edges}/{EDGES.length} EDGES
           </div>
         </div>
         <div className="flex gap-1.5 md:gap-3 items-center shrink-0">
@@ -426,7 +443,7 @@ export function GraphPage() {
         {/* DOSSIER — side panel on desktop */}
         {sp && !isMobile && (
           <div className="w-72 bg-surface border-l border-border p-4 overflow-y-auto shrink-0">
-            <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} isMobile={false} />
+            <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} isMobile={false} onSelectPerson={(p) => setSelected(p)} />
           </div>
         )}
       </div>
@@ -434,7 +451,7 @@ export function GraphPage() {
       {/* DOSSIER — bottom sheet on mobile */}
       {sp && isMobile && (
         <div className="absolute bottom-14 left-0 right-0 max-h-[60vh] bg-[rgba(5,9,15,0.97)] border-t border-border-emphasis p-4 overflow-y-auto z-modal rounded-t-xl">
-          <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} isMobile={true} />
+          <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} isMobile={true} onSelectPerson={(p) => setSelected(p)} />
         </div>
       )}
 
@@ -473,10 +490,11 @@ function ExpandButton({ personId }: { personId: string }) {
   return (
     <button
       onClick={() => navigate(`/person/${personId}`)}
-      className="p-1.5 rounded-md border border-border hover:border-border-emphasis text-text-muted hover:text-accent bg-transparent hover:bg-accent/10 transition-all duration-[var(--transition-base)] cursor-pointer shrink-0"
+      className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border hover:border-accent/50 text-text-muted hover:text-accent bg-transparent hover:bg-accent/10 transition-all duration-[var(--transition-base)] cursor-pointer shrink-0"
       title="View full profile"
     >
-      <Maximize2 className="w-3.5 h-3.5" />
+      <Maximize2 className="w-3 h-3" />
+      <span className="text-label font-mono tracking-wider">PROFILE</span>
     </button>
   );
 }
@@ -485,12 +503,13 @@ function DossierContent({
   sp,
   spEdges,
   onClose,
-  isMobile,
+  onSelectPerson,
 }: {
   sp: Person;
   spEdges: Edge[];
   onClose: () => void;
-  isMobile: boolean;
+  isMobile?: boolean;
+  onSelectPerson?: (person: Person) => void;
 }) {
   return (
     <>
@@ -498,14 +517,13 @@ function DossierContent({
         <div className="text-label font-mono text-text-muted tracking-[0.15em]">
           — NODE DOSSIER — LAYER {sp.layer === 0 ? "0 (ANCHOR)" : sp.layer}
         </div>
-        {isMobile && (
-          <button
-            onClick={onClose}
-            className="bg-transparent border border-border-emphasis text-text-muted text-xs font-mono px-2 py-0.5 cursor-pointer rounded-sm"
-          >
-            CLOSE
-          </button>
-        )}
+        <button
+          onClick={onClose}
+          className="p-1 rounded-md border border-border hover:border-border-emphasis text-text-muted hover:text-text-primary bg-transparent hover:bg-surface-hover transition-all duration-[var(--transition-base)] cursor-pointer"
+          title="Close dossier"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
       </div>
       <div className="flex items-start justify-between">
         <div>
@@ -565,15 +583,16 @@ function DossierContent({
           const other = PEOPLE.find((p) => p.id === oid);
           const dir = e.source === sp.id ? "\u2192" : "\u2190";
           return (
-            <div
+            <button
               key={i}
-              className="text-xs text-text-tertiary mb-1.5 pl-2 border-l-2"
+              onClick={() => { const p = PEOPLE.find(p => p.id === oid); if (p) onSelectPerson?.(p); }}
+              className="w-full text-left text-xs text-text-tertiary mb-2 p-2 rounded-md bg-bg-raised/30 hover:bg-bg-raised/50 border-l-2 cursor-pointer transition-all duration-[var(--transition-base)]"
               style={{ borderColor: `${getDomColor(other?.domains || ["context"])}50` }}
             >
               <span className="text-text-muted text-label">{dir} </span>
               <span className="text-text-secondary text-xs">{other?.name}</span>
               <span className="text-text-muted block mt-px text-label">{e.label}</span>
-            </div>
+            </button>
           );
         })}
       </div>
