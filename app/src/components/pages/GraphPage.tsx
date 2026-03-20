@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import * as d3 from "d3";
-import { Maximize2 } from "lucide-react";
+import { Maximize2, X } from "lucide-react";
 import graphData from "../../graph-data.json";
 import { DOMAINS, getDomColor, LAYER_LABEL_COLORS } from "../../lib/constants";
 import { useIsMobile } from "../../hooks/useIsMobile";
@@ -18,6 +18,7 @@ export function GraphPage() {
   const [hoveredEdge, setHoveredEdge] = useState<Edge | null>(null);
   const [dims, setDims] = useState({ w: 900, h: 580 });
   const [showFilters, setShowFilters] = useState(false);
+  const [visibleCounts, setVisibleCounts] = useState({ nodes: PEOPLE.length, edges: EDGES.length });
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -47,6 +48,9 @@ export function GraphPage() {
     );
     const nodeData = visNodes.map((n) => ({ ...n }));
     const edgeData = visEdges.map((e) => ({ ...e }));
+
+    // Update visible counts
+    setVisibleCounts({ nodes: visNodes.length, edges: visEdges.length });
 
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
@@ -79,6 +83,16 @@ export function GraphPage() {
       m.append("feMergeNode").attr("in", "cb");
       m.append("feMergeNode").attr("in", "SourceGraphic");
     });
+
+    // Selected node glow filter
+    const selectedFilter = defs.append("filter").attr("id", "selectedGlow");
+    selectedFilter.append("feGaussianBlur")
+      .attr("stdDeviation", "6")
+      .attr("result", "cb");
+    const selectedMerge = selectedFilter.append("feMerge");
+    selectedMerge.append("feMergeNode").attr("in", "cb");
+    selectedMerge.append("feMergeNode").attr("in", "cb");
+    selectedMerge.append("feMergeNode").attr("in", "SourceGraphic");
 
     const container = svg.append("g");
 
@@ -203,6 +217,17 @@ export function GraphPage() {
             .attr("filter", "url(#glow)"),
         );
       }
+
+      // Selection ring (hidden by default, shown when selected)
+      g.append("circle")
+        .attr("class", "selection-ring")
+        .attr("r", r + rw + 4)
+        .attr("fill", "none")
+        .attr("stroke", getDomColor(d.domains))
+        .attr("stroke-width", 2)
+        .attr("stroke-opacity", 0)
+        .attr("filter", "url(#selectedGlow)");
+
       g.append("circle")
         .attr("r", r)
         .attr(
@@ -267,6 +292,25 @@ export function GraphPage() {
         .text(d.name);
     });
 
+    // Highlight selected node
+    function updateSelectedHighlight(selectedId: string | null) {
+      nodeG.each(function (this: any, d: any) {
+        const g = d3.select(this);
+        const ring = g.select(".selection-ring");
+        if (d.id === selectedId) {
+          ring.attr("stroke-opacity", 0.7);
+        } else {
+          ring.attr("stroke-opacity", 0);
+        }
+      });
+    }
+
+    // Apply initial selection highlight
+    updateSelectedHighlight(selected?.id || null);
+
+    // Store the highlight updater so React can call it on selection changes
+    highlightRef.current = updateSelectedHighlight;
+
     nodeG
       .on("mouseenter", function (this: any) {
         d3.select(this).select("circle").attr("filter", "url(#strongGlow)");
@@ -285,6 +329,16 @@ export function GraphPage() {
     });
     return () => { sim.stop(); };
   }, [domFilters, layerFilter, dims, isMobile]);
+
+  // Ref to hold the D3 highlight updater function
+  const highlightRef = useRef<((id: string | null) => void) | null>(null);
+
+  // Update highlight when selected changes (without re-running the full simulation)
+  useEffect(() => {
+    if (highlightRef.current) {
+      highlightRef.current(selected?.id || null);
+    }
+  }, [selected]);
 
   const sp = PEOPLE.find((p) => p.id === selected?.id);
   const spEdges = sp
@@ -319,7 +373,7 @@ export function GraphPage() {
             </div>
           )}
           <div className="text-sm md:text-lg font-bold text-text-primary tracking-wide whitespace-nowrap font-mono">
-            {isMobile ? "AIE MAP" : "NETWORK GRAPH"} v0.3 · {PEOPLE.length} NODES · {EDGES.length} EDGES
+            {isMobile ? "AIE MAP" : "NETWORK GRAPH"} v0.3 · {visibleCounts.nodes}/{PEOPLE.length} NODES · {visibleCounts.edges}/{EDGES.length} EDGES
           </div>
         </div>
         <div className="flex gap-1.5 md:gap-3 items-center shrink-0">
@@ -426,7 +480,7 @@ export function GraphPage() {
         {/* DOSSIER — side panel on desktop */}
         {sp && !isMobile && (
           <div className="w-72 bg-surface border-l border-border p-4 overflow-y-auto shrink-0">
-            <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} isMobile={false} />
+            <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} onSelectPerson={setSelected} isMobile={false} />
           </div>
         )}
       </div>
@@ -434,7 +488,7 @@ export function GraphPage() {
       {/* DOSSIER — bottom sheet on mobile */}
       {sp && isMobile && (
         <div className="absolute bottom-14 left-0 right-0 max-h-[60vh] bg-[rgba(5,9,15,0.97)] border-t border-border-emphasis p-4 overflow-y-auto z-modal rounded-t-xl">
-          <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} isMobile={true} />
+          <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} onSelectPerson={setSelected} isMobile={true} />
         </div>
       )}
 
@@ -473,10 +527,11 @@ function ExpandButton({ personId }: { personId: string }) {
   return (
     <button
       onClick={() => navigate(`/person/${personId}`)}
-      className="p-1.5 rounded-md border border-border hover:border-border-emphasis text-text-muted hover:text-accent bg-transparent hover:bg-accent/10 transition-all duration-[var(--transition-base)] cursor-pointer shrink-0"
+      className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border hover:border-border-emphasis text-text-muted hover:text-accent bg-transparent hover:bg-accent/10 transition-all duration-[var(--transition-base)] cursor-pointer shrink-0"
       title="View full profile"
     >
-      <Maximize2 className="w-3.5 h-3.5" />
+      <Maximize2 className="w-3 h-3" />
+      <span className="text-label font-mono tracking-wider">VIEW PROFILE</span>
     </button>
   );
 }
@@ -485,11 +540,13 @@ function DossierContent({
   sp,
   spEdges,
   onClose,
-  isMobile,
+  onSelectPerson,
+  isMobile: _isMobile,
 }: {
   sp: Person;
   spEdges: Edge[];
   onClose: () => void;
+  onSelectPerson: (person: Person | null) => void;
   isMobile: boolean;
 }) {
   return (
@@ -498,14 +555,13 @@ function DossierContent({
         <div className="text-label font-mono text-text-faint tracking-[0.15em]">
           — NODE DOSSIER — LAYER {sp.layer === 0 ? "0 (ANCHOR)" : sp.layer}
         </div>
-        {isMobile && (
-          <button
-            onClick={onClose}
-            className="bg-transparent border border-border-emphasis text-text-muted text-xs font-mono px-2 py-0.5 cursor-pointer rounded-sm"
-          >
-            CLOSE
-          </button>
-        )}
+        <button
+          onClick={onClose}
+          className="bg-transparent border border-border-emphasis text-text-muted hover:text-text-secondary text-xs font-mono p-1 cursor-pointer rounded-sm transition-all duration-[var(--transition-base)] hover:bg-surface-hover"
+          title="Close dossier"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
       </div>
       <div className="flex items-start justify-between">
         <div>
@@ -565,15 +621,18 @@ function DossierContent({
           const other = PEOPLE.find((p) => p.id === oid);
           const dir = e.source === sp.id ? "\u2192" : "\u2190";
           return (
-            <div
+            <button
               key={i}
-              className="text-xs text-text-tertiary mb-1.5 pl-2 border-l-2"
+              onClick={() => {
+                if (other) onSelectPerson(other);
+              }}
+              className="text-left w-full text-xs text-text-tertiary mb-2 p-2 rounded-md bg-bg-raised/30 hover:bg-bg-raised/50 pl-2 border-l-2 cursor-pointer transition-all duration-[var(--transition-base)]"
               style={{ borderColor: `${getDomColor(other?.domains || ["context"])}50` }}
             >
               <span className="text-text-faint text-label">{dir} </span>
               <span className="text-text-secondary text-xs">{other?.name}</span>
               <span className="text-text-faint block mt-px text-label">{e.label}</span>
-            </div>
+            </button>
           );
         })}
       </div>
