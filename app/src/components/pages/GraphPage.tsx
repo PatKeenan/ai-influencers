@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import * as d3 from "d3";
-import { Maximize2 } from "lucide-react";
+import { Maximize2, X } from "lucide-react";
 import graphData from "../../graph-data.json";
-import { DOMAINS, getDomColor, LAYER_LABEL_COLORS } from "../../lib/constants";
+import { DOMAINS, getDomColor, LAYER_LABEL_COLORS, APP_VERSION } from "../../lib/constants";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import type { Person, Edge, DomainKey } from "../../lib/types";
 
@@ -12,26 +12,27 @@ const EDGES = graphData.edges as Edge[];
 
 export function GraphPage() {
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState<Person | null>(null);
   const [domFilters, setDomFilters] = useState(new Set(Object.keys(DOMAINS)));
   const [layerFilter, setLayerFilter] = useState(new Set([0, 1, 2]));
   const [hoveredEdge, setHoveredEdge] = useState<Edge | null>(null);
   const [dims, setDims] = useState({ w: 900, h: 580 });
   const [showFilters, setShowFilters] = useState(false);
+  const [visibleCounts, setVisibleCounts] = useState({ nodes: PEOPLE.length, edges: EDGES.length });
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const upd = () => {
-      const sidebarW = isMobile ? 0 : 56; // 14 * 4 = 56px sidebar
-      setDims({
-        w: isMobile ? window.innerWidth : Math.min(window.innerWidth - sidebarW, 1200),
-        h: isMobile ? window.innerHeight - 56 : window.innerHeight, // 56px bottom tabs on mobile
-      });
-    };
-    upd();
-    window.addEventListener("resize", upd);
-    return () => window.removeEventListener("resize", upd);
-  }, [isMobile]);
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      if (width > 0 && height > 0) {
+        setDims({ w: width, h: height });
+      }
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -45,6 +46,7 @@ export function GraphPage() {
     const visEdges = EDGES.filter(
       (e) => visIds.has(e.source) && visIds.has(e.target),
     );
+    setVisibleCounts({ nodes: visNodes.length, edges: visEdges.length });
     const nodeData = visNodes.map((n) => ({ ...n }));
     const edgeData = visEdges.map((e) => ({ ...e }));
 
@@ -157,6 +159,27 @@ export function GraphPage() {
         setHoveredEdge(null);
       });
 
+    const linkHitAreas = container
+      .append("g")
+      .selectAll("line")
+      .data(edgeData)
+      .join("line")
+      .attr("stroke", "transparent")
+      .attr("stroke-width", 12)
+      .style("cursor", "pointer")
+      .on("mouseenter", function (this: any, _ev: any, d: any) {
+        links.filter((ld: any) => ld === d)
+          .attr("stroke-opacity", 0.85)
+          .attr("stroke-width", (dd: any) => Math.sqrt(dd.weight) * 2.5);
+        setHoveredEdge(d);
+      })
+      .on("mouseleave", function (this: any, _ev: any, d: any) {
+        links.filter((ld: any) => ld === d)
+          .attr("stroke-opacity", 0.15)
+          .attr("stroke-width", (dd: any) => Math.sqrt(dd.weight) * 1.2);
+        setHoveredEdge(null);
+      });
+
     const nodeG = container
       .append("g")
       .selectAll("g")
@@ -252,7 +275,7 @@ export function GraphPage() {
           .attr("text-anchor", "middle")
           .attr("fill", "rgba(200,215,230,0.4)")
           .attr("font-family", "var(--font-mono)")
-          .attr("font-size", 6)
+          .attr("font-size", 9)
           .text("L2");
       }
       g.append("text")
@@ -260,7 +283,7 @@ export function GraphPage() {
         .attr("text-anchor", "middle")
         .attr("fill", LAYER_LABEL_COLORS[d.layer] || "#c8d7e6")
         .attr("font-family", "var(--font-mono)")
-        .attr("font-size", d.anchor ? (isMobile ? 11 : 13) : isMobile ? 8 : 10.5)
+        .attr("font-size", d.anchor ? (isMobile ? 11 : 13) : isMobile ? 10 : 10.5)
         .attr("font-weight", d.anchor ? "bold" : "normal")
         .attr("letter-spacing", "0.04em")
         .attr("opacity", isL2 ? 0.75 : 1)
@@ -281,10 +304,30 @@ export function GraphPage() {
         .attr("y1", (d: any) => d.source.y)
         .attr("x2", (d: any) => d.target.x)
         .attr("y2", (d: any) => d.target.y);
+      linkHitAreas
+        .attr("x1", (d: any) => d.source.x)
+        .attr("y1", (d: any) => d.source.y)
+        .attr("x2", (d: any) => d.target.x)
+        .attr("y2", (d: any) => d.target.y);
       nodeG.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
     });
     return () => { sim.stop(); };
   }, [domFilters, layerFilter, dims, isMobile]);
+
+  useEffect(() => {
+    if (!svgRef.current) return;
+    const svg = d3.select(svgRef.current);
+    // Reset all nodes
+    svg.selectAll("g g g").select("circle").attr("filter", "url(#glow)");
+    // Highlight selected
+    if (selected) {
+      svg.selectAll("g g g").each(function(this: any, d: any) {
+        if (d.id === selected.id) {
+          d3.select(this).select("circle").attr("filter", "url(#strongGlow)");
+        }
+      });
+    }
+  }, [selected]);
 
   const sp = PEOPLE.find((p) => p.id === selected?.id);
   const spEdges = sp
@@ -319,12 +362,12 @@ export function GraphPage() {
             </div>
           )}
           <div className="text-sm md:text-lg font-bold text-text-primary tracking-wide whitespace-nowrap font-mono">
-            {isMobile ? "AIE MAP" : "NETWORK GRAPH"} v0.3 · {PEOPLE.length} NODES · {EDGES.length} EDGES
+            {isMobile ? "AIE MAP" : "NETWORK GRAPH"} {APP_VERSION} · {visibleCounts.nodes}/{PEOPLE.length} NODES · {visibleCounts.edges}/{EDGES.length} EDGES
           </div>
         </div>
         <div className="flex gap-1.5 md:gap-3 items-center shrink-0">
           {!isMobile && (
-            <div className="text-caption font-mono text-text-faint text-right leading-relaxed">
+            <div className="text-label font-mono text-text-muted text-right leading-relaxed">
               <div>MARCH 2026</div>
               <div>L1 + L2 EXPANSION</div>
             </div>
@@ -350,7 +393,7 @@ export function GraphPage() {
               <button
                 key={l}
                 onClick={() => toggleLayer(l)}
-                className={`px-2 py-1.5 md:py-1 text-label md:text-caption font-mono tracking-wider border rounded-sm cursor-pointer transition-all duration-[var(--transition-base)] ${
+                className={`px-2 py-1.5 md:py-1 text-label font-mono tracking-wider border rounded-sm cursor-pointer transition-all duration-[var(--transition-base)] ${
                   layerFilter.has(l)
                     ? "bg-surface-active border-border-strong text-text-secondary"
                     : "bg-surface-hover/30 border-border text-text-faint"
@@ -365,9 +408,9 @@ export function GraphPage() {
 
       {/* DOMAIN FILTERS */}
       {(!isMobile || showFilters) && (
-        <div className="px-3 md:px-5 py-2 flex gap-1.5 border-b border-border-subtle bg-black/20 flex-wrap items-center shrink-0">
+        <div className="px-4 md:px-5 py-2 flex gap-1.5 border-b border-border-subtle bg-black/20 flex-wrap items-center shrink-0">
           {!isMobile && (
-            <span className="text-label font-mono text-text-faint tracking-[0.12em] mr-1">
+            <span className="text-label font-mono text-text-muted tracking-[0.12em] mr-1">
               DOMAIN:
             </span>
           )}
@@ -380,7 +423,7 @@ export function GraphPage() {
                 borderColor: domFilters.has(key) ? `${color}80` : undefined,
                 color: domFilters.has(key) ? color : undefined,
               }}
-              className={`px-2.5 py-1.5 md:py-1 text-label md:text-caption font-mono tracking-wider border rounded-sm cursor-pointer transition-all duration-[var(--transition-base)] ${
+              className={`px-2.5 py-1.5 md:py-1 text-label font-mono tracking-wider border rounded-sm cursor-pointer transition-all duration-[var(--transition-base)] ${
                 !domFilters.has(key) ? "bg-surface-hover/30 border-border text-text-faint" : ""
               }`}
             >
@@ -388,7 +431,7 @@ export function GraphPage() {
             </button>
           ))}
           {!isMobile && (
-            <span className="text-caption font-mono text-text-faint ml-auto">
+            <span className="text-label font-mono text-text-tertiary ml-auto">
               CLICK NODE FOR DOSSIER · DRAG TO REPOSITION · HOVER EDGE FOR RELATIONSHIP
             </span>
           )}
@@ -397,7 +440,7 @@ export function GraphPage() {
 
       {/* MAIN GRAPH AREA */}
       <div className="flex flex-1 relative overflow-hidden">
-        <div className="flex-1 relative overflow-hidden">
+        <div ref={containerRef} className="flex-1 relative overflow-hidden">
           <svg
             ref={svgRef}
             width={dims.w}
@@ -426,7 +469,7 @@ export function GraphPage() {
         {/* DOSSIER — side panel on desktop */}
         {sp && !isMobile && (
           <div className="w-72 bg-surface border-l border-border p-4 overflow-y-auto shrink-0">
-            <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} isMobile={false} />
+            <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} isMobile={false} onSelectPerson={(p) => setSelected(p)} />
           </div>
         )}
       </div>
@@ -434,7 +477,7 @@ export function GraphPage() {
       {/* DOSSIER — bottom sheet on mobile */}
       {sp && isMobile && (
         <div className="absolute bottom-14 left-0 right-0 max-h-[60vh] bg-[rgba(5,9,15,0.97)] border-t border-border-emphasis p-4 overflow-y-auto z-modal rounded-t-xl">
-          <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} isMobile={true} />
+          <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} isMobile={true} onSelectPerson={(p) => setSelected(p)} />
         </div>
       )}
 
@@ -447,7 +490,7 @@ export function GraphPage() {
                 className="w-2 h-2 rounded-sm"
                 style={{ background: color }}
               />
-              <span className="text-caption font-mono text-text-muted tracking-wider">
+              <span className="text-label font-mono text-text-muted tracking-wider">
                 {label.toUpperCase()}
               </span>
             </div>
@@ -455,11 +498,11 @@ export function GraphPage() {
           <div className="w-px h-3 bg-border-emphasis mx-1" />
           <div className="flex items-center gap-1.5">
             <div className="w-3.5 h-3.5 rounded-full border border-dashed border-text-faint bg-[rgba(15,20,30,0.85)]" />
-            <span className="text-caption font-mono text-text-faint tracking-wider">
+            <span className="text-label font-mono text-text-tertiary tracking-wider">
               LAYER 2 NODE
             </span>
           </div>
-          <span className="ml-auto text-caption font-mono text-text-faint tracking-wide">
+          <span className="ml-auto text-label font-mono text-text-tertiary tracking-wide">
             NODE SIZE = INBOUND CONNECTIONS · ARC SEGMENTS = DOMAINS
           </span>
         </div>
@@ -473,10 +516,11 @@ function ExpandButton({ personId }: { personId: string }) {
   return (
     <button
       onClick={() => navigate(`/person/${personId}`)}
-      className="p-1.5 rounded-md border border-border hover:border-border-emphasis text-text-muted hover:text-accent bg-transparent hover:bg-accent/10 transition-all duration-[var(--transition-base)] cursor-pointer shrink-0"
+      className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border hover:border-accent/50 text-text-muted hover:text-accent bg-transparent hover:bg-accent/10 transition-all duration-[var(--transition-base)] cursor-pointer shrink-0"
       title="View full profile"
     >
-      <Maximize2 className="w-3.5 h-3.5" />
+      <Maximize2 className="w-3 h-3" />
+      <span className="text-label font-mono tracking-wider">PROFILE</span>
     </button>
   );
 }
@@ -485,32 +529,35 @@ function DossierContent({
   sp,
   spEdges,
   onClose,
-  isMobile,
+  onSelectPerson,
 }: {
   sp: Person;
   spEdges: Edge[];
   onClose: () => void;
-  isMobile: boolean;
+  isMobile?: boolean;
+  onSelectPerson?: (person: Person) => void;
 }) {
   return (
     <>
       <div className="flex justify-between items-center mb-2.5">
-        <div className="text-label font-mono text-text-faint tracking-[0.15em]">
+        <div className="text-label font-mono text-text-muted tracking-[0.15em]">
           — NODE DOSSIER — LAYER {sp.layer === 0 ? "0 (ANCHOR)" : sp.layer}
         </div>
-        {isMobile && (
-          <button
-            onClick={onClose}
-            className="bg-transparent border border-border-emphasis text-text-muted text-xs font-mono px-2 py-0.5 cursor-pointer rounded-sm"
-          >
-            CLOSE
-          </button>
-        )}
+        <button
+          onClick={onClose}
+          className="p-1 rounded-md border border-border hover:border-border-emphasis text-text-muted hover:text-text-primary bg-transparent hover:bg-surface-hover transition-all duration-[var(--transition-base)] cursor-pointer"
+          title="Close dossier"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
       </div>
       <div className="flex items-start justify-between">
         <div>
           <div className="text-lg font-bold text-text-primary mb-0.5">{sp.name}</div>
-          <div className="text-xs text-text-muted mb-3">{sp.fullName}</div>
+          {sp.fullName !== sp.name && (
+            <div className="text-xs text-text-muted mb-3">{sp.fullName}</div>
+          )}
+          {sp.fullName === sp.name && <div className="mb-3" />}
         </div>
         <ExpandButton personId={sp.id} />
       </div>
@@ -534,13 +581,20 @@ function DossierContent({
         {sp.description}
       </div>
       <div className="border-t border-border-subtle pt-2.5 mb-3">
-        <div className="text-label font-mono text-text-faint tracking-[0.12em] mb-1.5">FIND THEM</div>
-        <div className="text-sm text-accent">{sp.handle}</div>
-        <div className="text-xs text-text-faint mt-0.5">{sp.platform}</div>
+        <div className="text-label font-mono text-text-muted tracking-[0.12em] mb-1.5">FIND THEM</div>
+        <a
+          href={`https://x.com/${sp.handle.replace('@', '')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-accent hover:text-accent-hover transition-colors"
+        >
+          {sp.handle}
+        </a>
+        <div className="text-xs text-text-muted mt-0.5">{sp.platform}</div>
       </div>
       {sp.reading && sp.reading.length > 0 && (
         <div className="border-t border-border-subtle pt-2.5 mb-3">
-          <div className="text-label font-mono text-text-faint tracking-[0.12em] mb-2">
+          <div className="text-label font-mono text-text-muted tracking-[0.12em] mb-2">
             READING ({sp.reading.length})
           </div>
           {sp.reading.map((r, i) => (
@@ -557,7 +611,7 @@ function DossierContent({
         </div>
       )}
       <div className="border-t border-border-subtle pt-2.5">
-        <div className="text-label font-mono text-text-faint tracking-[0.12em] mb-2">
+        <div className="text-label font-mono text-text-muted tracking-[0.12em] mb-2">
           EDGES ({spEdges.length})
         </div>
         {spEdges.map((e, i) => {
@@ -565,15 +619,16 @@ function DossierContent({
           const other = PEOPLE.find((p) => p.id === oid);
           const dir = e.source === sp.id ? "\u2192" : "\u2190";
           return (
-            <div
+            <button
               key={i}
-              className="text-xs text-text-tertiary mb-1.5 pl-2 border-l-2"
+              onClick={() => { const p = PEOPLE.find(p => p.id === oid); if (p) onSelectPerson?.(p); }}
+              className="w-full text-left text-xs text-text-tertiary mb-2 p-2 rounded-md bg-bg-raised/30 hover:bg-bg-raised/50 border-l-2 cursor-pointer transition-all duration-[var(--transition-base)]"
               style={{ borderColor: `${getDomColor(other?.domains || ["context"])}50` }}
             >
-              <span className="text-text-faint text-label">{dir} </span>
+              <span className="text-text-muted text-label">{dir} </span>
               <span className="text-text-secondary text-xs">{other?.name}</span>
-              <span className="text-text-faint block mt-px text-label">{e.label}</span>
-            </div>
+              <span className="text-text-muted block mt-px text-label">{e.label}</span>
+            </button>
           );
         })}
       </div>
