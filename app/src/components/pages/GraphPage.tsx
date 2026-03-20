@@ -2,24 +2,22 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import * as d3 from "d3";
 import { Maximize2, X } from "lucide-react";
-import graphData from "../../graph-data.json";
 import { DOMAINS, getDomColor, LAYER_LABEL_COLORS, APP_VERSION } from "../../lib/constants";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { useGraphData } from "../../hooks/useGraphData";
 import type { Person, Edge, DomainKey } from "../../lib/types";
-
-const PEOPLE = graphData.people as Person[];
-const EDGES = graphData.edges as Edge[];
 
 export function GraphPage() {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { people, edges, loading } = useGraphData();
   const [selected, setSelected] = useState<Person | null>(null);
   const [domFilters, setDomFilters] = useState(new Set(Object.keys(DOMAINS)));
   const [layerFilter, setLayerFilter] = useState(new Set([0, 1, 2]));
   const [hoveredEdge, setHoveredEdge] = useState<Edge | null>(null);
   const [dims, setDims] = useState({ w: 900, h: 580 });
   const [showFilters, setShowFilters] = useState(false);
-  const [visibleCounts, setVisibleCounts] = useState({ nodes: PEOPLE.length, edges: EDGES.length });
+  const [visibleCounts, setVisibleCounts] = useState({ nodes: 0, edges: 0 });
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -35,15 +33,15 @@ export function GraphPage() {
   }, []);
 
   useEffect(() => {
-    if (!svgRef.current) return;
+    if (!svgRef.current || people.length === 0) return;
     const { w, h } = dims;
-    const visNodes = PEOPLE.filter(
+    const visNodes = people.filter(
       (n) =>
         n.domains.some((d: string) => domFilters.has(d)) &&
         layerFilter.has(n.layer),
     );
     const visIds = new Set(visNodes.map((n) => n.id));
-    const visEdges = EDGES.filter(
+    const visEdges = edges.filter(
       (e) => visIds.has(e.source) && visIds.has(e.target),
     );
     setVisibleCounts({ nodes: visNodes.length, edges: visEdges.length });
@@ -312,7 +310,7 @@ export function GraphPage() {
       nodeG.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
     });
     return () => { sim.stop(); };
-  }, [domFilters, layerFilter, dims, isMobile]);
+  }, [people, edges, domFilters, layerFilter, dims, isMobile]);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -329,9 +327,9 @@ export function GraphPage() {
     }
   }, [selected]);
 
-  const sp = PEOPLE.find((p) => p.id === selected?.id);
+  const sp = people.find((p) => p.id === selected?.id);
   const spEdges = sp
-    ? EDGES.filter((e) => e.source === sp.id || e.target === sp.id)
+    ? edges.filter((e) => e.source === sp.id || e.target === sp.id)
     : [];
 
   const toggleDom = (key: string) =>
@@ -351,6 +349,14 @@ export function GraphPage() {
       return n;
     });
 
+  if (loading) {
+    return (
+      <div className="flex flex-col flex-1 items-center justify-center">
+        <div className="text-sm font-mono text-text-muted tracking-wider">LOADING GRAPH DATA...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col flex-1 overflow-hidden">
       {/* HEADER */}
@@ -362,7 +368,7 @@ export function GraphPage() {
             </div>
           )}
           <div className="text-sm md:text-lg font-bold text-text-primary tracking-wide whitespace-nowrap font-mono">
-            {isMobile ? "AIE MAP" : "NETWORK GRAPH"} {APP_VERSION} · {visibleCounts.nodes}/{PEOPLE.length} NODES · {visibleCounts.edges}/{EDGES.length} EDGES
+            {isMobile ? "AIE MAP" : "NETWORK GRAPH"} {APP_VERSION} · {visibleCounts.nodes}/{people.length} NODES · {visibleCounts.edges}/{edges.length} EDGES
           </div>
         </div>
         <div className="flex gap-1.5 md:gap-3 items-center shrink-0">
@@ -469,7 +475,7 @@ export function GraphPage() {
         {/* DOSSIER — side panel on desktop */}
         {sp && !isMobile && (
           <div className="w-72 bg-surface border-l border-border p-4 overflow-y-auto shrink-0">
-            <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} isMobile={false} onSelectPerson={(p) => setSelected(p)} />
+            <DossierContent sp={sp} spEdges={spEdges} people={people} onClose={() => setSelected(null)} isMobile={false} onSelectPerson={(p) => setSelected(p)} />
           </div>
         )}
       </div>
@@ -477,7 +483,7 @@ export function GraphPage() {
       {/* DOSSIER — bottom sheet on mobile */}
       {sp && isMobile && (
         <div className="absolute bottom-14 left-0 right-0 max-h-[60vh] bg-[rgba(5,9,15,0.97)] border-t border-border-emphasis p-4 overflow-y-auto z-modal rounded-t-xl">
-          <DossierContent sp={sp} spEdges={spEdges} onClose={() => setSelected(null)} isMobile={true} onSelectPerson={(p) => setSelected(p)} />
+          <DossierContent sp={sp} spEdges={spEdges} people={people} onClose={() => setSelected(null)} isMobile={true} onSelectPerson={(p) => setSelected(p)} />
         </div>
       )}
 
@@ -528,11 +534,13 @@ function ExpandButton({ personId }: { personId: string }) {
 function DossierContent({
   sp,
   spEdges,
+  people,
   onClose,
   onSelectPerson,
 }: {
   sp: Person;
   spEdges: Edge[];
+  people: Person[];
   onClose: () => void;
   isMobile?: boolean;
   onSelectPerson?: (person: Person) => void;
@@ -616,12 +624,12 @@ function DossierContent({
         </div>
         {spEdges.map((e, i) => {
           const oid = e.source === sp.id ? e.target : e.source;
-          const other = PEOPLE.find((p) => p.id === oid);
+          const other = people.find((p) => p.id === oid);
           const dir = e.source === sp.id ? "\u2192" : "\u2190";
           return (
             <button
               key={i}
-              onClick={() => { const p = PEOPLE.find(p => p.id === oid); if (p) onSelectPerson?.(p); }}
+              onClick={() => { const p = people.find(p => p.id === oid); if (p) onSelectPerson?.(p); }}
               className="w-full text-left text-xs text-text-tertiary mb-2 p-2 rounded-md bg-bg-raised/30 hover:bg-bg-raised/50 border-l-2 cursor-pointer transition-all duration-[var(--transition-base)]"
               style={{ borderColor: `${getDomColor(other?.domains || ["context"])}50` }}
             >
