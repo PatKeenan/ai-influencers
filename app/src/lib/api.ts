@@ -1,4 +1,4 @@
-import type { Person, Edge, GraphData } from "./types";
+import type { Person, Edge, GraphData, ArticleContent, Note } from "./types";
 import graphDataFallback from "../graph-data.json";
 
 const API_BASE = "/api";
@@ -52,4 +52,37 @@ export async function updateArticle(id: number, updates: { status?: string; cate
   });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
+}
+
+export async function fetchArticleContent(id: number): Promise<ArticleContent> {
+  const res = await fetch(`${API_BASE}/articles/${id}/content`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchNotes(articleId: number): Promise<Note[]> {
+  const res = await fetch(`${API_BASE}/articles/${articleId}/notes`);
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function saveNote(articleId: number, content: string, noteId?: number): Promise<Note> {
+  if (noteId) {
+    const res = await fetch(`${API_BASE}/notes/${noteId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content }),
+    });
+    return res.json();
+  }
+  const res = await fetch(`${API_BASE}/articles/${articleId}/notes`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content }),
+  });
+  return res.json();
+}
+
+export async function deleteNote(noteId: number): Promise<void> {
+  await fetch(`${API_BASE}/notes/${noteId}`, { method: "DELETE" });
 }

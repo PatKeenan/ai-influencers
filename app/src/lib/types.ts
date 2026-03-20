@@ -53,6 +53,25 @@ export interface Article {
   created_at: string;
 }
 
+/** A note attached to an article */
+export interface Note {
+  id: number;
+  article_id: number;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Extracted article content for the reader */
+export interface ArticleContent {
+  id: number;
+  title: string;
+  url: string;
+  content: string | null;
+  extracted_at: string | null;
+  error?: string;
+}
+
 /** The full graph data structure */
 export interface GraphData {
   people: Person[];
