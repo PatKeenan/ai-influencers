@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router";
 import * as d3 from "d3";
+import { Maximize2 } from "lucide-react";
 import graphData from "../../graph-data.json";
 import { DOMAINS, getDomColor, LAYER_LABEL_COLORS } from "../../lib/constants";
 import { useIsMobile } from "../../hooks/useIsMobile";
@@ -466,6 +468,19 @@ export function GraphPage() {
   );
 }
 
+function ExpandButton({ personId }: { personId: string }) {
+  const navigate = useNavigate();
+  return (
+    <button
+      onClick={() => navigate(`/person/${personId}`)}
+      className="p-1.5 rounded-md border border-border hover:border-border-emphasis text-text-muted hover:text-accent bg-transparent hover:bg-accent/10 transition-all duration-[var(--transition-base)] cursor-pointer shrink-0"
+      title="View full profile"
+    >
+      <Maximize2 className="w-3.5 h-3.5" />
+    </button>
+  );
+}
+
 function DossierContent({
   sp,
   spEdges,
@@ -492,8 +507,13 @@ function DossierContent({
           </button>
         )}
       </div>
-      <div className="text-lg font-bold text-text-primary mb-0.5">{sp.name}</div>
-      <div className="text-xs text-text-muted mb-3">{sp.fullName}</div>
+      <div className="flex items-start justify-between">
+        <div>
+          <div className="text-lg font-bold text-text-primary mb-0.5">{sp.name}</div>
+          <div className="text-xs text-text-muted mb-3">{sp.fullName}</div>
+        </div>
+        <ExpandButton personId={sp.id} />
+      </div>
       <div className="flex gap-1 flex-wrap mb-3">
         {sp.domains.map((d: DomainKey) => (
           <span
