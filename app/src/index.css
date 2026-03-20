@@ -1,111 +1,152 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import "tailwindcss";
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+/*
+ * ==========================================================================
+ * INFLUENCE MAP — Design Tokens
+ * ==========================================================================
+ * All design tokens are defined here using Tailwind v4's @theme directive.
+ * These tokens are the single source of truth for colors, typography,
+ * spacing, and other visual properties across the app.
+ *
+ * Usage: Apply tokens via Tailwind classes (e.g., `bg-surface`, `text-primary`,
+ * `font-mono`, `text-label`). See docs/patterns/ui/ for the full style guide.
+ * ==========================================================================
+ */
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@theme {
+  /* ── Base palette ─────────────────────────────────────────────────────── */
+  --color-bg: #080c12;
+  --color-bg-raised: #0d1117;
+  --color-bg-overlay: #141a23;
+  --color-surface: rgba(0, 0, 0, 0.55);
+  --color-surface-hover: rgba(255, 255, 255, 0.05);
+  --color-surface-active: rgba(255, 255, 255, 0.08);
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  /* ── Borders ──────────────────────────────────────────────────────────── */
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-subtle: rgba(255, 255, 255, 0.04);
+  --color-border-emphasis: rgba(255, 255, 255, 0.12);
+  --color-border-strong: rgba(255, 255, 255, 0.18);
+
+  /* ── Text ──────────────────────────────────────────────────────────────── */
+  --color-text-primary: #e8f4ff;
+  --color-text-secondary: #c8d7e6;
+  --color-text-tertiary: rgba(200, 215, 230, 0.65);
+  --color-text-muted: rgba(200, 215, 230, 0.4);
+  --color-text-faint: rgba(200, 215, 230, 0.25);
+
+  /* ── Domain colors ────────────────────────────────────────────────────── */
+  --color-domain-ctx: #00d4ff;
+  --color-domain-eval: #f5c542;
+  --color-domain-orch: #d966ff;
+  --color-domain-dev: #4dff91;
+
+  /* ── Domain backgrounds (low opacity for badges/buttons) ──────────────── */
+  --color-domain-ctx-bg: rgba(0, 212, 255, 0.09);
+  --color-domain-eval-bg: rgba(245, 197, 66, 0.09);
+  --color-domain-orch-bg: rgba(217, 102, 255, 0.09);
+  --color-domain-dev-bg: rgba(77, 255, 145, 0.09);
+
+  /* ── Domain borders ──────────────────────────────────────────────────── */
+  --color-domain-ctx-border: rgba(0, 212, 255, 0.5);
+  --color-domain-eval-border: rgba(245, 197, 66, 0.5);
+  --color-domain-orch-border: rgba(217, 102, 255, 0.5);
+  --color-domain-dev-border: rgba(77, 255, 145, 0.5);
+
+  /* ── Accent / interactive ─────────────────────────────────────────────── */
+  --color-accent: #00d4ff;
+  --color-accent-hover: #33ddff;
+  --color-accent-bg: rgba(0, 212, 255, 0.12);
+
+  /* ── Status ───────────────────────────────────────────────────────────── */
+  --color-success: #4dff91;
+  --color-warning: #f5c542;
+  --color-error: #ff6b6b;
+
+  /* ── Typography ───────────────────────────────────────────────────────── */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", "Fira Code", monospace;
+
+  /* ── Font sizes (readable scale — minimum 12px for body text) ─────────── */
+  --text-xs: 0.75rem;       /* 12px — smallest readable body text */
+  --text-sm: 0.8125rem;     /* 13px */
+  --text-base: 0.875rem;    /* 14px — default body */
+  --text-lg: 1rem;          /* 16px */
+  --text-xl: 1.125rem;      /* 18px */
+  --text-2xl: 1.375rem;     /* 22px */
+  --text-3xl: 1.75rem;      /* 28px */
+
+  /* ── Label/caption size (monospace UI labels) ─────────────────────────── */
+  --text-label: 0.6875rem;  /* 11px — for monospace labels, badges */
+  --text-caption: 0.625rem; /* 10px — graph labels only, not body text */
+
+  /* ── Spacing scale ────────────────────────────────────────────────────── */
+  /* Uses Tailwind's default scale (0.5=2px, 1=4px, 2=8px, etc.) */
+
+  /* ── Border radius ────────────────────────────────────────────────────── */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+
+  /* ── Shadows ──────────────────────────────────────────────────────────── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 12px rgba(0, 212, 255, 0.15);
+
+  /* ── Transitions ──────────────────────────────────────────────────────── */
+  --transition-fast: 100ms ease;
+  --transition-base: 150ms ease;
+  --transition-slow: 250ms ease;
+
+  /* ── Z-index scale ────────────────────────────────────────────────────── */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-overlay: 50;
+  --z-modal: 100;
+  --z-toast: 200;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+/* ── Base styles ──────────────────────────────────────────────────────────── */
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+html {
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+/* ── Scrollbar styling ────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+::-webkit-scrollbar-thumb {
+  background: rgba(200, 215, 230, 0.12);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(200, 215, 230, 0.2);
 }
