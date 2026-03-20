@@ -1,5 +1,8 @@
 import type { DomainKey, DomainConfig } from "./types";
 
+/** Centralized app version string */
+export const APP_VERSION = "v0.3";
+
 /** Domain configuration — colors, labels, and abbreviations */
 export const DOMAINS: Record<DomainKey, DomainConfig> = {
   context: { label: "Context Engineering", color: "#00d4ff", short: "CTX" },

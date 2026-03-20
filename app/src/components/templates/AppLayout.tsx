@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useLocation } from "react-router";
 import { Network, Rss } from "lucide-react";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { APP_VERSION } from "../../lib/constants";
 
 const NAV_ITEMS = [
   { to: "/", icon: Network, label: "Graph", end: true },
@@ -53,20 +54,20 @@ export function AppLayout() {
           <div className="mt-auto pb-3 flex flex-col items-center gap-1">
             <div className="w-8 h-px bg-border mb-1" />
             <span className="text-[8px] font-mono text-text-faint tracking-widest">
-              v0.3
+              {APP_VERSION}
             </span>
           </div>
         </nav>
       )}
 
       {/* Main content area */}
-      <main className={`flex-1 flex flex-col min-w-0 min-h-0 ${isMobile && !isPersonPage ? "pb-14" : ""}`}>
+      <main className={`flex-1 flex flex-col min-w-0 min-h-0 ${isMobile && !isPersonPage ? "pb-[calc(3.5rem+env(safe-area-inset-bottom))]" : ""}`}>
         <Outlet />
       </main>
 
       {/* Mobile bottom tab bar */}
       {isMobile && !isPersonPage && (
-        <nav className="fixed bottom-0 left-0 right-0 h-14 bg-bg-raised/95 backdrop-blur-sm border-t border-border flex items-center justify-around z-overlay">
+        <nav className="fixed bottom-0 left-0 right-0 h-14 pb-[env(safe-area-inset-bottom)] bg-bg-raised/95 backdrop-blur-sm border-t border-border flex items-center justify-around z-overlay">
           {NAV_ITEMS.map(({ to, icon: Icon, label, ...rest }) => (
             <NavLink
               key={to}
