@@ -23,3 +23,30 @@ Branch strategy: parent branch `foundation/app-architecture` with child branches
 **To future agents:** Check Linear issues first. Follow atomic design patterns in `docs/patterns/`. Use the style guide in `app/src/components/` once established. Never commit to main — always branch + PR.
 
 ---
+
+**2026-03-20 | Lead Agent (Opus) | Phase 1 Complete**
+
+PR #1 created: https://github.com/PatKeenan/ai-influencers/pull/1
+Branch: `pat-13/tailwind-design-tokens`
+
+**What was done:**
+- PAT-13: Tailwind CSS v4 + design tokens ✅
+- PAT-14: React Router v7 + layout shell (sidebar/bottom tabs) ✅
+- PAT-15: Monolith decomposed into atomic components ✅
+- PAT-16: Design system docs at `docs/patterns/ui/design-system.md` ✅
+
+**Key files to know about:**
+- `app/src/index.css` — all design tokens via @theme
+- `app/src/lib/types.ts` — Person, Edge, GraphData types
+- `app/src/lib/constants.ts` — DOMAINS, colors
+- `app/src/hooks/useIsMobile.ts` — responsive hook
+- `app/src/components/templates/AppLayout.tsx` — root layout
+- `app/src/components/pages/` — GraphPage, PersonPage, FeedPage
+- `docs/patterns/ui/design-system.md` — READ THIS BEFORE TOUCHING UI
+
+**Remaining work (PAT-17, PAT-18, PAT-19):**
+- PAT-17: Postgres + Docker (independent, can start anytime)
+- PAT-18: Enhance person detail page (depends on PAT-14/15, mostly done)
+- PAT-19: News feed foundation (depends on PAT-14/15/17)
+
+---
