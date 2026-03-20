@@ -42,7 +42,7 @@ export function AppLayout() {
                 }
               >
                 <Icon className="w-[18px] h-[18px]" />
-                <span className="text-[9px] font-mono tracking-wider mt-0.5 uppercase">
+                <span className="text-label font-mono tracking-wider mt-0.5 uppercase">
                   {label}
                 </span>
               </NavLink>
@@ -52,7 +52,7 @@ export function AppLayout() {
           {/* Bottom spacer */}
           <div className="mt-auto pb-3 flex flex-col items-center gap-1">
             <div className="w-8 h-px bg-border mb-1" />
-            <span className="text-[8px] font-mono text-text-faint tracking-widest">
+            <span className="text-caption font-mono text-text-muted tracking-widest">
               v0.3
             </span>
           </div>

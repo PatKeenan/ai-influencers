@@ -252,7 +252,7 @@ export function GraphPage() {
           .attr("text-anchor", "middle")
           .attr("fill", "rgba(200,215,230,0.4)")
           .attr("font-family", "var(--font-mono)")
-          .attr("font-size", 6)
+          .attr("font-size", 9)
           .text("L2");
       }
       g.append("text")
@@ -260,7 +260,7 @@ export function GraphPage() {
         .attr("text-anchor", "middle")
         .attr("fill", LAYER_LABEL_COLORS[d.layer] || "#c8d7e6")
         .attr("font-family", "var(--font-mono)")
-        .attr("font-size", d.anchor ? (isMobile ? 11 : 13) : isMobile ? 8 : 10.5)
+        .attr("font-size", d.anchor ? (isMobile ? 11 : 13) : isMobile ? 10 : 10.5)
         .attr("font-weight", d.anchor ? "bold" : "normal")
         .attr("letter-spacing", "0.04em")
         .attr("opacity", isL2 ? 0.75 : 1)
@@ -324,7 +324,7 @@ export function GraphPage() {
         </div>
         <div className="flex gap-1.5 md:gap-3 items-center shrink-0">
           {!isMobile && (
-            <div className="text-caption font-mono text-text-faint text-right leading-relaxed">
+            <div className="text-label font-mono text-text-muted text-right leading-relaxed">
               <div>MARCH 2026</div>
               <div>L1 + L2 EXPANSION</div>
             </div>
@@ -350,7 +350,7 @@ export function GraphPage() {
               <button
                 key={l}
                 onClick={() => toggleLayer(l)}
-                className={`px-2 py-1.5 md:py-1 text-label md:text-caption font-mono tracking-wider border rounded-sm cursor-pointer transition-all duration-[var(--transition-base)] ${
+                className={`px-2 py-1.5 md:py-1 text-label font-mono tracking-wider border rounded-sm cursor-pointer transition-all duration-[var(--transition-base)] ${
                   layerFilter.has(l)
                     ? "bg-surface-active border-border-strong text-text-secondary"
                     : "bg-surface-hover/30 border-border text-text-faint"
@@ -367,7 +367,7 @@ export function GraphPage() {
       {(!isMobile || showFilters) && (
         <div className="px-3 md:px-5 py-2 flex gap-1.5 border-b border-border-subtle bg-black/20 flex-wrap items-center shrink-0">
           {!isMobile && (
-            <span className="text-label font-mono text-text-faint tracking-[0.12em] mr-1">
+            <span className="text-label font-mono text-text-muted tracking-[0.12em] mr-1">
               DOMAIN:
             </span>
           )}
@@ -380,7 +380,7 @@ export function GraphPage() {
                 borderColor: domFilters.has(key) ? `${color}80` : undefined,
                 color: domFilters.has(key) ? color : undefined,
               }}
-              className={`px-2.5 py-1.5 md:py-1 text-label md:text-caption font-mono tracking-wider border rounded-sm cursor-pointer transition-all duration-[var(--transition-base)] ${
+              className={`px-2.5 py-1.5 md:py-1 text-label font-mono tracking-wider border rounded-sm cursor-pointer transition-all duration-[var(--transition-base)] ${
                 !domFilters.has(key) ? "bg-surface-hover/30 border-border text-text-faint" : ""
               }`}
             >
@@ -388,7 +388,7 @@ export function GraphPage() {
             </button>
           ))}
           {!isMobile && (
-            <span className="text-caption font-mono text-text-faint ml-auto">
+            <span className="text-label font-mono text-text-muted ml-auto">
               CLICK NODE FOR DOSSIER · DRAG TO REPOSITION · HOVER EDGE FOR RELATIONSHIP
             </span>
           )}
@@ -447,7 +447,7 @@ export function GraphPage() {
                 className="w-2 h-2 rounded-sm"
                 style={{ background: color }}
               />
-              <span className="text-caption font-mono text-text-muted tracking-wider">
+              <span className="text-label font-mono text-text-tertiary tracking-wider">
                 {label.toUpperCase()}
               </span>
             </div>
@@ -455,11 +455,11 @@ export function GraphPage() {
           <div className="w-px h-3 bg-border-emphasis mx-1" />
           <div className="flex items-center gap-1.5">
             <div className="w-3.5 h-3.5 rounded-full border border-dashed border-text-faint bg-[rgba(15,20,30,0.85)]" />
-            <span className="text-caption font-mono text-text-faint tracking-wider">
+            <span className="text-label font-mono text-text-tertiary tracking-wider">
               LAYER 2 NODE
             </span>
           </div>
-          <span className="ml-auto text-caption font-mono text-text-faint tracking-wide">
+          <span className="ml-auto text-label font-mono text-text-tertiary tracking-wide">
             NODE SIZE = INBOUND CONNECTIONS · ARC SEGMENTS = DOMAINS
           </span>
         </div>
@@ -495,7 +495,7 @@ function DossierContent({
   return (
     <>
       <div className="flex justify-between items-center mb-2.5">
-        <div className="text-label font-mono text-text-faint tracking-[0.15em]">
+        <div className="text-label font-mono text-text-muted tracking-[0.15em]">
           — NODE DOSSIER — LAYER {sp.layer === 0 ? "0 (ANCHOR)" : sp.layer}
         </div>
         {isMobile && (
@@ -534,13 +534,13 @@ function DossierContent({
         {sp.description}
       </div>
       <div className="border-t border-border-subtle pt-2.5 mb-3">
-        <div className="text-label font-mono text-text-faint tracking-[0.12em] mb-1.5">FIND THEM</div>
+        <div className="text-label font-mono text-text-muted tracking-[0.12em] mb-1.5">FIND THEM</div>
         <div className="text-sm text-accent">{sp.handle}</div>
-        <div className="text-xs text-text-faint mt-0.5">{sp.platform}</div>
+        <div className="text-xs text-text-muted mt-0.5">{sp.platform}</div>
       </div>
       {sp.reading && sp.reading.length > 0 && (
         <div className="border-t border-border-subtle pt-2.5 mb-3">
-          <div className="text-label font-mono text-text-faint tracking-[0.12em] mb-2">
+          <div className="text-label font-mono text-text-muted tracking-[0.12em] mb-2">
             READING ({sp.reading.length})
           </div>
           {sp.reading.map((r, i) => (
@@ -557,7 +557,7 @@ function DossierContent({
         </div>
       )}
       <div className="border-t border-border-subtle pt-2.5">
-        <div className="text-label font-mono text-text-faint tracking-[0.12em] mb-2">
+        <div className="text-label font-mono text-text-muted tracking-[0.12em] mb-2">
           EDGES ({spEdges.length})
         </div>
         {spEdges.map((e, i) => {
@@ -570,9 +570,9 @@ function DossierContent({
               className="text-xs text-text-tertiary mb-1.5 pl-2 border-l-2"
               style={{ borderColor: `${getDomColor(other?.domains || ["context"])}50` }}
             >
-              <span className="text-text-faint text-label">{dir} </span>
+              <span className="text-text-muted text-label">{dir} </span>
               <span className="text-text-secondary text-xs">{other?.name}</span>
-              <span className="text-text-faint block mt-px text-label">{e.label}</span>
+              <span className="text-text-muted block mt-px text-label">{e.label}</span>
             </div>
           );
         })}
