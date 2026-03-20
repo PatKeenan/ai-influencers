@@ -12,8 +12,8 @@ export function AppLayout() {
   const isMobile = useIsMobile();
   const location = useLocation();
 
-  // On person detail pages, show a back-friendly layout
-  const isPersonPage = location.pathname.startsWith("/person/");
+  // On detail pages (person, reader), hide bottom tabs and show back-friendly layout
+  const isFullPage = location.pathname.startsWith("/person/") || location.pathname.startsWith("/read/");
 
   return (
     <div className="flex h-dvh bg-bg text-text-secondary overflow-hidden">
@@ -61,12 +61,12 @@ export function AppLayout() {
       )}
 
       {/* Main content area */}
-      <main className={`flex-1 flex flex-col min-w-0 min-h-0 ${isMobile && !isPersonPage ? "pb-[calc(3.5rem+env(safe-area-inset-bottom))]" : ""}`}>
+      <main className={`flex-1 flex flex-col min-w-0 min-h-0 ${isMobile && !isFullPage ? "pb-[calc(3.5rem+env(safe-area-inset-bottom))]" : ""}`}>
         <Outlet />
       </main>
 
       {/* Mobile bottom tab bar */}
-      {isMobile && !isPersonPage && (
+      {isMobile && !isFullPage && (
         <nav className="fixed bottom-0 left-0 right-0 h-14 bg-bg-raised/95 backdrop-blur-sm border-t border-border flex items-center justify-around z-overlay pb-[env(safe-area-inset-bottom)]">
           {NAV_ITEMS.map(({ to, icon: Icon, label, ...rest }) => (
             <NavLink
