@@ -1,16 +1,22 @@
 import { useParams, useNavigate } from "react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
-import graphData from "../../graph-data.json";
 import { DOMAINS, getDomColor } from "../../lib/constants";
-import type { Person, Edge, DomainKey } from "../../lib/types";
-
-const PEOPLE = graphData.people as Person[];
-const EDGES = graphData.edges as Edge[];
+import { useGraphData } from "../../hooks/useGraphData";
+import type { DomainKey } from "../../lib/types";
 
 export function PersonPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const person = PEOPLE.find((p) => p.id === id);
+  const { people, edges: allEdges, loading } = useGraphData();
+  const person = people.find((p) => p.id === id);
+
+  if (loading) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
+        <div className="text-sm font-mono text-text-muted tracking-wider">LOADING...</div>
+      </div>
+    );
+  }
 
   if (!person) {
     return (
@@ -20,13 +26,13 @@ export function PersonPage() {
           onClick={() => navigate("/")}
           className="mt-4 text-accent text-sm font-mono hover:text-accent-hover transition-colors cursor-pointer"
         >
-          ← Back to Graph
+          &larr; Back to Graph
         </button>
       </div>
     );
   }
 
-  const edges = EDGES.filter((e) => e.source === person.id || e.target === person.id);
+  const edges = allEdges.filter((e) => e.source === person.id || e.target === person.id);
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -125,7 +131,7 @@ export function PersonPage() {
           <div className="flex flex-col gap-2">
             {edges.map((e, i) => {
               const oid = e.source === person.id ? e.target : e.source;
-              const other = PEOPLE.find((p) => p.id === oid);
+              const other = people.find((p) => p.id === oid);
               const dir = e.source === person.id ? "→" : "←";
               return (
                 <button
