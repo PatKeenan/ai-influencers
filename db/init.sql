@@ -38,6 +38,8 @@ CREATE TABLE articles (
   status TEXT NOT NULL DEFAULT 'unread' CHECK (status IN ('unread', 'read', 'archived')),
   category TEXT,
   influence_score NUMERIC(6,2),
+  extracted_content TEXT,
+  extracted_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -49,6 +51,15 @@ CREATE TABLE article_categories (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE notes (
+  id SERIAL PRIMARY KEY,
+  article_id INTEGER NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+  content TEXT NOT NULL DEFAULT '',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- Index for feed sorting
 CREATE INDEX idx_articles_feed ON articles(status, influence_score DESC, published_at DESC);
 CREATE INDEX idx_articles_author ON articles(author_id);
+CREATE INDEX idx_notes_article ON notes(article_id);
