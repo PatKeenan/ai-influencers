@@ -12,6 +12,7 @@ const EDGES = graphData.edges as Edge[];
 
 export function GraphPage() {
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState<Person | null>(null);
   const [domFilters, setDomFilters] = useState(new Set(Object.keys(DOMAINS)));
   const [layerFilter, setLayerFilter] = useState(new Set([0, 1, 2]));
@@ -21,17 +22,14 @@ export function GraphPage() {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const upd = () => {
-      const sidebarW = isMobile ? 0 : 56; // 14 * 4 = 56px sidebar
-      setDims({
-        w: isMobile ? window.innerWidth : Math.min(window.innerWidth - sidebarW, 1200),
-        h: isMobile ? window.innerHeight - 56 : window.innerHeight, // 56px bottom tabs on mobile
-      });
-    };
-    upd();
-    window.addEventListener("resize", upd);
-    return () => window.removeEventListener("resize", upd);
-  }, [isMobile]);
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      setDims({ w: width, h: height });
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -142,18 +140,27 @@ export function GraphPage() {
         return s ? getDomColor(s.domains) : "rgba(255,255,255,0.1)";
       })
       .attr("stroke-opacity", 0.15)
-      .attr("stroke-width", (d: any) => Math.sqrt(d.weight) * 1.2)
+      .attr("stroke-width", (d: any) => Math.sqrt(d.weight) * 1.2);
+
+    // Invisible wider hover target for edges
+    const linkHitAreas = container
+      .append("g")
+      .selectAll("line")
+      .data(edgeData)
+      .join("line")
+      .attr("stroke", "transparent")
+      .attr("stroke-width", 12)
       .style("cursor", "pointer")
       .on("mouseenter", function (this: any, _ev: any, d: any) {
-        d3.select(this)
+        links.filter((ld: any) => ld === d)
           .attr("stroke-opacity", 0.85)
-          .attr("stroke-width", Math.sqrt(d.weight) * 2.5);
+          .attr("stroke-width", (dd: any) => Math.sqrt(dd.weight) * 2.5);
         setHoveredEdge(d);
       })
       .on("mouseleave", function (this: any, _ev: any, d: any) {
-        d3.select(this)
+        links.filter((ld: any) => ld === d)
           .attr("stroke-opacity", 0.15)
-          .attr("stroke-width", Math.sqrt(d.weight) * 1.2);
+          .attr("stroke-width", (dd: any) => Math.sqrt(dd.weight) * 1.2);
         setHoveredEdge(null);
       });
 
@@ -281,6 +288,11 @@ export function GraphPage() {
         .attr("y1", (d: any) => d.source.y)
         .attr("x2", (d: any) => d.target.x)
         .attr("y2", (d: any) => d.target.y);
+      linkHitAreas
+        .attr("x1", (d: any) => d.source.x)
+        .attr("y1", (d: any) => d.source.y)
+        .attr("x2", (d: any) => d.target.x)
+        .attr("y2", (d: any) => d.target.y);
       nodeG.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
     });
     return () => { sim.stop(); };
@@ -365,7 +377,7 @@ export function GraphPage() {
 
       {/* DOMAIN FILTERS */}
       {(!isMobile || showFilters) && (
-        <div className="px-3 md:px-5 py-2 flex gap-1.5 border-b border-border-subtle bg-black/20 flex-wrap items-center shrink-0">
+        <div className="px-4 md:px-5 py-2 flex gap-1.5 border-b border-border-subtle bg-black/20 flex-wrap items-center shrink-0">
           {!isMobile && (
             <span className="text-label font-mono text-text-faint tracking-[0.12em] mr-1">
               DOMAIN:
@@ -397,7 +409,7 @@ export function GraphPage() {
 
       {/* MAIN GRAPH AREA */}
       <div className="flex flex-1 relative overflow-hidden">
-        <div className="flex-1 relative overflow-hidden">
+        <div ref={containerRef} className="flex-1 relative overflow-hidden">
           <svg
             ref={svgRef}
             width={dims.w}
