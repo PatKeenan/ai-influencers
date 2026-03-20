@@ -38,6 +38,21 @@ export interface Edge {
   label: string;
 }
 
+/** An article in the news feed */
+export interface Article {
+  id: number;
+  url: string;
+  title: string;
+  author_id: string;
+  author_name?: string;
+  author_domains?: DomainKey[];
+  published_at: string | null;
+  status: "unread" | "read" | "archived";
+  category: string | null;
+  influence_score: number | null;
+  created_at: string;
+}
+
 /** The full graph data structure */
 export interface GraphData {
   people: Person[];
