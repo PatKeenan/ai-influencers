@@ -1,0 +1,1378 @@
+{
+  "people": [
+    {
+      "id": "swyx",
+      "name": "swyx",
+      "fullName": "Shawn Wang",
+      "layer": 0,
+      "domains": [
+        "context",
+        "orchestration",
+        "evals",
+        "aidev"
+      ],
+      "role": "Latent Space Host · AI Engineer Summit Organizer",
+      "handle": "@swyx",
+      "platform": "X · latent.space · swyx.io",
+      "description": "Coined 'AI Engineer'. Organizes AIE Summit, World's Fair, and Code Summit. Highest-connectivity node across all four domains. Active weekly through March 2026.",
+      "inbound": 24,
+      "anchor": true,
+      "reading": [
+        {
+          "title": "The Rise of the AI Engineer",
+          "url": "https://www.latent.space/p/ai-engineer"
+        },
+        {
+          "title": "2025 AI Engineering Reading List",
+          "url": "https://www.latent.space/p/2025-papers"
+        },
+        {
+          "title": "RAG is Dead, Context Engineering is King",
+          "url": "https://www.latent.space/p/chroma"
+        },
+        {
+          "title": "Scaling without Slop (2026 predictions)",
+          "url": "https://www.latent.space/p/2026"
+        }
+      ]
+    },
+    {
+      "id": "alessio",
+      "name": "Alessio",
+      "fullName": "Alessio Fanelli",
+      "layer": 1,
+      "domains": [
+        "orchestration",
+        "aidev"
+      ],
+      "role": "Latent Space Co-host · Partner @ Decibel VC",
+      "handle": "@fanahova",
+      "platform": "X · latent.space",
+      "description": "Co-hosts Latent Space. Investor lens on AI engineering infrastructure. Co-curates AIE conference content.",
+      "inbound": 2,
+      "reading": [
+        {
+          "title": "Latent Space Podcast",
+          "url": "https://www.latent.space/"
+        }
+      ]
+    },
+    {
+      "id": "simon",
+      "name": "Simon Willison",
+      "fullName": "Simon Willison",
+      "layer": 1,
+      "domains": [
+        "context",
+        "aidev",
+        "evals"
+      ],
+      "role": "Creator of Datasette & LLM CLI · Independent",
+      "handle": "@simonw",
+      "platform": "X · simonwillison.net",
+      "description": "Won best-of-conference AIE World's Fair 2025. Posts multiple times daily through March 2026. Coined 'prompt injection'. 39 Karpathy citations on blog.",
+      "inbound": 11,
+      "reading": [
+        {
+          "title": "Things we learned about LLMs in 2024",
+          "url": "https://simonwillison.net/2024/Dec/31/llms-in-2024/"
+        },
+        {
+          "title": "How I use LLMs to help me write code",
+          "url": "https://simonw.substack.com/p/how-i-use-llms-to-help-me-write-code"
+        },
+        {
+          "title": "2025: The year in LLMs",
+          "url": "https://simonw.substack.com/p/2025-the-year-in-llms"
+        },
+        {
+          "title": "Prompt injection tag",
+          "url": "https://simonwillison.net/tags/prompt-injection/"
+        }
+      ]
+    },
+    {
+      "id": "harrison",
+      "name": "Harrison Chase",
+      "fullName": "Harrison Chase",
+      "layer": 1,
+      "domains": [
+        "orchestration",
+        "context"
+      ],
+      "role": "Co-founder & CEO, LangChain",
+      "handle": "@hwchase17",
+      "platform": "X · blog.langchain.com",
+      "description": "Built LangChain ($1.25B, 99k stars). LangGraph is the dominant agent orchestration framework. Coined 'ambient agents'. Pioneering 'harness engineering'. Active March 2026.",
+      "inbound": 12,
+      "reading": [
+        {
+          "title": "The Rise of Context Engineering",
+          "url": "https://blog.langchain.com/the-rise-of-context-engineering/"
+        },
+        {
+          "title": "Introducing Ambient Agents",
+          "url": "https://blog.langchain.com/introducing-ambient-agents/"
+        },
+        {
+          "title": "Context Engineering Long-Horizon Agents (Sequoia)",
+          "url": "https://sequoiacap.com/podcast/context-engineering-our-way-to-long-horizon-agents-langchains-harrison-chase/"
+        }
+      ]
+    },
+    {
+      "id": "hamel",
+      "name": "Hamel Husain",
+      "fullName": "Hamel Husain",
+      "layer": 1,
+      "domains": [
+        "evals"
+      ],
+      "role": "Independent AI Consultant (ex-GitHub, HuggingFace)",
+      "handle": "@HamelHusain",
+      "platform": "X · hamel.dev",
+      "description": "Community's foremost expert on production LLM evals. Co-teaches AI Evals for Engineers (3,000+ students). Simon Willison cites him repeatedly.",
+      "inbound": 12,
+      "reading": [
+        {
+          "title": "What We Learned from a Year of Building with LLMs",
+          "url": "https://applied-llms.org/"
+        },
+        {
+          "title": "Your AI Product Needs Evals",
+          "url": "https://hamel.dev/blog/posts/evals/"
+        },
+        {
+          "title": "Using LLM-as-a-Judge: A Complete Guide",
+          "url": "https://hamel.dev/blog/posts/llm-judge/"
+        }
+      ]
+    },
+    {
+      "id": "shreya",
+      "name": "Shreya Shankar",
+      "fullName": "Shreya Shankar",
+      "layer": 1,
+      "domains": [
+        "evals",
+        "context"
+      ],
+      "role": "PhD @ UC Berkeley · AI Evals Course Co-founder",
+      "handle": "@sh_reya",
+      "platform": "X · sh-reya.com",
+      "description": "Built DocETL. Co-teaches evals course with Hamel. Research co-author with Harrison Chase on LangSmith eval alignment. Adopted by LangChain and OpenAI.",
+      "inbound": 6,
+      "reading": [
+        {
+          "title": "What We Learned from a Year of Building with LLMs",
+          "url": "https://applied-llms.org/"
+        },
+        {
+          "title": "DocETL",
+          "url": "https://github.com/shreyashankar/docetl"
+        }
+      ]
+    },
+    {
+      "id": "eugene",
+      "name": "Eugene Yan",
+      "fullName": "Eugene Yan",
+      "layer": 1,
+      "domains": [
+        "evals",
+        "context"
+      ],
+      "role": "Field ↔ Frontier @ Anthropic",
+      "handle": "@eugeneyan",
+      "platform": "X · eugeneyan.com",
+      "description": "Now at Anthropic. Signal-dense writing on evals, RAG, and long-context QA. Endorsed on Latent Space about page. swyx recommends alongside Chip Huyen.",
+      "inbound": 6,
+      "reading": [
+        {
+          "title": "What We Learned from a Year of Building with LLMs",
+          "url": "https://applied-llms.org/"
+        },
+        {
+          "title": "eugeneyan.com",
+          "url": "https://eugeneyan.com/"
+        }
+      ]
+    },
+    {
+      "id": "jason",
+      "name": "Jason Liu",
+      "fullName": "Jason Liu",
+      "layer": 1,
+      "domains": [
+        "context",
+        "evals"
+      ],
+      "role": "OpenAI · a16z scout · Creator of Instructor",
+      "handle": "@jxnlco",
+      "platform": "X · jxnl.co",
+      "description": "Now at OpenAI supporting developers. Built Instructor (structured LLM outputs). \"No evals, no serious app\" is his signature thesis. a16z scout.",
+      "inbound": 5,
+      "reading": [
+        {
+          "title": "Systematically Improving RAG Applications",
+          "url": "https://jxnl.co/writing/2025/01/24/systematically-improving-rag-applications/"
+        },
+        {
+          "title": "Hard Truths From the AI Trenches",
+          "url": "https://jxnl.co/writing/2025/03/05/ai-from-the-trenches/"
+        },
+        {
+          "title": "Instructor library",
+          "url": "https://python.useinstructor.com/"
+        }
+      ]
+    },
+    {
+      "id": "jeremy",
+      "name": "Jeremy Howard",
+      "fullName": "Jeremy Howard",
+      "layer": 1,
+      "domains": [
+        "aidev",
+        "context"
+      ],
+      "role": "Co-founder Answer.ai · Creator of fast.ai",
+      "handle": "@jeremyphoward",
+      "platform": "X · jeremy.fast.ai",
+      "description": "Building Answer.ai for practical AI productivity tools. fast.ai democratized ML education. Latent Space guest.",
+      "inbound": 2,
+      "reading": [
+        {
+          "title": "Answer.ai blog",
+          "url": "https://www.answer.ai/"
+        },
+        {
+          "title": "fast.ai",
+          "url": "https://www.fast.ai/"
+        }
+      ]
+    },
+    {
+      "id": "dex",
+      "name": "Dex Horthy",
+      "fullName": "Dex Horthy",
+      "layer": 1,
+      "domains": [
+        "context",
+        "orchestration"
+      ],
+      "role": "Founder, hlyr.dev (ex-Humanloop)",
+      "handle": "@dexhorthy",
+      "platform": "X · humanloop.com",
+      "description": "Building the post-IDE IDE at hlyr.dev/code. Coined \"context engineering\" on stage at AIE Summit 2025. Created 12 Factor Agents framework.",
+      "inbound": 4,
+      "reading": [
+        {
+          "title": "12 Factor Agents",
+          "url": "https://www.humanlayer.dev/12-factor-agents"
+        },
+        {
+          "title": "Ralph Loops / RPI Methodology",
+          "url": "https://linearb.io/blog/dex-horthy-humanlayer-rpi-methodology-ralph-loop"
+        }
+      ]
+    },
+    {
+      "id": "sasha",
+      "name": "Sasha Rush",
+      "fullName": "Alexander Rush",
+      "layer": 1,
+      "domains": [
+        "evals",
+        "orchestration"
+      ],
+      "role": "Researcher @ Cursor (ex-MIT)",
+      "handle": "@srush_nlp",
+      "platform": "X · srush.github.io",
+      "description": "Now at Cursor. Keynoted AIE World's Fair. Academic rigor applied to production LLM programming. Appeared at AIE Code Summit alongside Lee Robinson.",
+      "inbound": 3,
+      "reading": []
+    },
+    {
+      "id": "beyang",
+      "name": "Beyang Liu",
+      "fullName": "Beyang Liu",
+      "layer": 1,
+      "domains": [
+        "aidev",
+        "orchestration"
+      ],
+      "role": "Co-founder & CTO, Sourcegraph / Amp Code",
+      "handle": "@beyang",
+      "platform": "X",
+      "description": "3x AIE Top Speaker. Built Sourcegraph and Amp Code (team-scale coding agent). Deep practitioner on agent-ready codebases. Active Nov 2025.",
+      "inbound": 3,
+      "reading": []
+    },
+    {
+      "id": "yegge",
+      "name": "Steve Yegge",
+      "fullName": "Steve Yegge",
+      "layer": 1,
+      "domains": [
+        "aidev"
+      ],
+      "role": "Principal Engineer, Sourcegraph",
+      "handle": "@Steve_Yegge",
+      "platform": "X · medium.com/@steve-yegge",
+      "description": "'2026: The Year the IDE Died' at AIE Code Summit was one of the most-cited talks. Famous for legendary developer manifestos. Original long-form thinker.",
+      "inbound": 3,
+      "reading": []
+    },
+    {
+      "id": "leerob",
+      "name": "Lee Robinson",
+      "fullName": "Lee Robinson",
+      "layer": 1,
+      "domains": [
+        "aidev"
+      ],
+      "role": "Head of DX, Cursor",
+      "handle": "@leerob",
+      "platform": "X · leerob.com",
+      "description": "Runs developer experience at Cursor. Handle changed from @leeerob to @leerob. Gave the Cursor Composer infrastructure, training, and evals talk at AIE Code Summit 2025.",
+      "inbound": 3,
+      "reading": [
+        {
+          "title": "leerob.com",
+          "url": "https://leerob.com/"
+        }
+      ]
+    },
+    {
+      "id": "catasta",
+      "name": "M. Catasta",
+      "fullName": "Michele Catasta",
+      "layer": 1,
+      "domains": [
+        "aidev",
+        "orchestration"
+      ],
+      "role": "President of Engineering, Replit",
+      "handle": "@pirroh",
+      "platform": "X",
+      "description": "'Autonomy Is All You Need' at AIE Code Summit 2025. Running Replit's entire AI agent platform. Deep practitioner on autonomous agent design.",
+      "inbound": 2,
+      "reading": []
+    },
+    {
+      "id": "eno",
+      "name": "Eno Reyes",
+      "fullName": "Eno Reyes",
+      "layer": 1,
+      "domains": [
+        "aidev",
+        "orchestration"
+      ],
+      "role": "CTO, Factory AI",
+      "handle": "@enoreyes_",
+      "platform": "X",
+      "description": "Spoke at AIE Code Summit 2025 on 'eight categories for agent-ready codebases' — genuinely novel framework. Factory AI builds production coding agents.",
+      "inbound": 2,
+      "reading": []
+    },
+    {
+      "id": "brennan",
+      "name": "R. Brennan",
+      "fullName": "Robert Brennan",
+      "layer": 1,
+      "domains": [
+        "orchestration",
+        "aidev"
+      ],
+      "role": "CEO, AllHands AI (OpenHands)",
+      "handle": "@rbrennan_tech",
+      "platform": "X · github.com/All-Hands-AI",
+      "description": "OpenHands is #1 open-source coding agent on SWE-bench. Building the open alternative to Devin. AIE Code Summit Nov 2025 speaker.",
+      "inbound": 3,
+      "reading": [
+        {
+          "title": "OpenHands",
+          "url": "https://github.com/All-Hands-AI/OpenHands"
+        }
+      ]
+    },
+    {
+      "id": "lance",
+      "name": "Lance Martin",
+      "fullName": "Lance Martin",
+      "layer": 1,
+      "domains": [
+        "context",
+        "orchestration"
+      ],
+      "role": "AI Researcher @ Anthropic (ex-LangChain)",
+      "handle": "@RLanceMartin",
+      "platform": "X · rlancemartin.github.io",
+      "description": "Now at Anthropic. Dedicated Latent Space episode on \"Context Engineering for Agents\" in 2025. His post and dbreunig's \"How Contexts Fail\" are the two foundational practitioner pieces on the topic.",
+      "inbound": 3,
+      "reading": [
+        {
+          "title": "Context Engineering for Agents",
+          "url": "https://rlancemartin.github.io/2025/06/23/context_engineering/"
+        },
+        {
+          "title": "Context Engineering in Manus",
+          "url": "https://rlancemartin.github.io/2025/10/15/manus/"
+        }
+      ]
+    },
+    {
+      "id": "chip",
+      "name": "Chip Huyen",
+      "fullName": "Chip Huyen",
+      "layer": 2,
+      "domains": [
+        "evals",
+        "context",
+        "orchestration"
+      ],
+      "role": "Author, AI Engineering (O'Reilly 2025)",
+      "handle": "@chipro",
+      "platform": "X · huyenchip.com",
+      "description": "Wrote 'AI Engineering' — #1 most-read book on O'Reilly 2025. Cited by swyx for context + agents. Active original long-form writing. Endorsed by Hamel Husain in book acknowledgments.",
+      "inbound": 12,
+      "reading": [
+        {
+          "title": "AI Engineering (O'Reilly book)",
+          "url": "https://www.oreilly.com/library/view/ai-engineering/9781098166298/"
+        },
+        {
+          "title": "Agents",
+          "url": "https://huyenchip.com/2025/01/07/agents.html"
+        },
+        {
+          "title": "Building A Generative AI Platform",
+          "url": "https://huyenchip.com/2024/07/25/genai-platform.html"
+        }
+      ]
+    },
+    {
+      "id": "dbreunig",
+      "name": "D. Breunig",
+      "fullName": "Drew Breunig",
+      "layer": 2,
+      "domains": [
+        "context",
+        "orchestration"
+      ],
+      "role": "Analyst & Writer, dbreunig.com",
+      "handle": "@dbreunig",
+      "platform": "X · dbreunig.com",
+      "description": "Wrote \"How Contexts Fail and How to Fix Them\" — foundational piece Lance Martin's LS episode was structured around. Active analyst of agent reliability. Dec 2025 post on enterprise agents.",
+      "inbound": 3,
+      "reading": [
+        {
+          "title": "How Long Contexts Fail",
+          "url": "https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html"
+        },
+        {
+          "title": "The 3 AI Use Cases: Gods, Interns, and Cogs",
+          "url": "https://www.dbreunig.com/2024/10/18/the-3-ai-use-cases-gods-interns-and-cogs.html"
+        }
+      ]
+    },
+    {
+      "id": "nathan",
+      "name": "Nathan Lambert",
+      "fullName": "Nathan Lambert",
+      "layer": 2,
+      "domains": [
+        "evals"
+      ],
+      "role": "Researcher · Interconnects Newsletter",
+      "handle": "@natolambert",
+      "platform": "X · interconnects.ai",
+      "description": "Runs Interconnects — most-cited newsletter on post-training and evals. Appeared with swyx on SAIL Live #6 Feb 2026. Bridges research-to-production evals thinking.",
+      "inbound": 3,
+      "reading": [
+        {
+          "title": "Interconnects newsletter",
+          "url": "https://www.interconnects.ai/"
+        }
+      ]
+    },
+    {
+      "id": "karpathy",
+      "name": "A. Karpathy",
+      "fullName": "Andrej Karpathy",
+      "layer": 2,
+      "domains": [
+        "aidev",
+        "context"
+      ],
+      "role": "Independent Researcher · nanochat · vibe coding",
+      "handle": "@karpathy",
+      "platform": "X · karpathy.ai",
+      "description": "Coined 'vibe coding'. Building nanochat (from-scratch LLM). Simon Willison tags him 39 times in 2025-2026. Sets the conceptual vocabulary the field adopts. Very active through March 2026.",
+      "inbound": 4,
+      "reading": [
+        {
+          "title": "Vibe Coding (tweet)",
+          "url": "https://x.com/karpathy/status/1886192184808149383"
+        },
+        {
+          "title": "2025 LLM Year in Review",
+          "url": "https://karpathy.bearblog.dev/year-in-review-2025/"
+        }
+      ]
+    },
+    {
+      "id": "charlesfrye",
+      "name": "Charles Frye",
+      "fullName": "Charles Frye",
+      "layer": 2,
+      "domains": [
+        "evals",
+        "context"
+      ],
+      "role": "AI Engineer @ Modal · GPU Glossary author",
+      "handle": "@charles_irl",
+      "platform": "X · modal.com",
+      "description": "Co-authored 'What We Learned from a Year of Building with LLMs' with Hamel, Eugene, Jason, Shreya, Bryan. Created GPU Glossary. Active Feb 2026.",
+      "inbound": 8,
+      "reading": [
+        {
+          "title": "GPU Glossary",
+          "url": "https://modal.com/gpu-glossary"
+        },
+        {
+          "title": "What We Learned from a Year of Building with LLMs",
+          "url": "https://applied-llms.org/"
+        }
+      ]
+    },
+    {
+      "id": "omar",
+      "name": "Omar Khattab",
+      "fullName": "Omar Khattab",
+      "layer": 2,
+      "domains": [
+        "context",
+        "evals"
+      ],
+      "role": "Asst. Professor, MIT CSAIL · Creator of DSPy & ColBERT",
+      "handle": "@lateinteraction",
+      "platform": "X · omarkhattab.com",
+      "description": "Built DSPy — declarative LM programming framework. Foundational to prompt optimization and context engineering. 17k+ citations. Active Mar 2026.",
+      "inbound": 4,
+      "reading": [
+        {
+          "title": "DSPy: Compiling Declarative LM Calls (ICLR'24)",
+          "url": "https://arxiv.org/abs/2310.03714"
+        }
+      ]
+    },
+    {
+      "id": "geoffrey",
+      "name": "Geoffrey Litt",
+      "fullName": "Geoffrey Litt",
+      "layer": 2,
+      "domains": [
+        "aidev",
+        "context"
+      ],
+      "role": "Researcher @ Ink & Switch / Notion",
+      "handle": "@geoffreylitt",
+      "platform": "X · geoffreylitt.com",
+      "description": "Coined 'Copilots vs HUDs' framework. 12 tagged posts on simonwillison.net. Pioneering malleable software and AI UX beyond chatbots. Active Feb 2026.",
+      "inbound": 1,
+      "reading": [
+        {
+          "title": "Malleable software in the age of LLMs",
+          "url": "https://www.geoffreylitt.com/2023/03/25/llm-end-user-programming.html"
+        },
+        {
+          "title": "Enough AI copilots! We need AI HUDs",
+          "url": "https://www.geoffreylitt.com/2025/07/27/enough-ai-copilots-we-need-ai-huds"
+        },
+        {
+          "title": "Malleable Software (Ink & Switch)",
+          "url": "https://www.inkandswitch.com/essay/malleable-software/"
+        }
+      ]
+    },
+    {
+      "id": "addy",
+      "name": "Addy Osmani",
+      "fullName": "Addy Osmani",
+      "layer": 2,
+      "domains": [
+        "aidev",
+        "context"
+      ],
+      "role": "Director, Google Cloud AI (Gemini/Vertex)",
+      "handle": "@addyosmani",
+      "platform": "X · addyo.substack.com",
+      "description": "600k+ Substack subscribers. Prolific writer on context engineering and agentic coding. 'The 80% Problem in Agentic Coding' widely shared. Active Feb 2026.",
+      "inbound": 2,
+      "reading": [
+        {
+          "title": "The 80% Problem in Agentic Coding",
+          "url": "https://addyo.substack.com/p/the-80-problem-in-agentic-coding"
+        }
+      ]
+    },
+    {
+      "id": "carlini",
+      "name": "N. Carlini",
+      "fullName": "Nicholas Carlini",
+      "layer": 2,
+      "domains": [
+        "aidev",
+        "evals"
+      ],
+      "role": "Research Scientist @ Anthropic",
+      "handle": "@nicholas_carlini",
+      "platform": "nicholas.carlini.com",
+      "description": "18 tagged posts on simonwillison.net (tied for most). Built Claude C Compiler. Bridges adversarial ML and practical AI engineering. Active Mar 2026.",
+      "inbound": 1,
+      "reading": [
+        {
+          "title": "Are large language models worth it?",
+          "url": "https://nicholas.carlini.com/writing/2025/are-llms-worth-it.html"
+        }
+      ]
+    },
+    {
+      "id": "bryan",
+      "name": "Bryan Bischof",
+      "fullName": "Bryan Bischof",
+      "layer": 2,
+      "domains": [
+        "evals"
+      ],
+      "role": "Head of AI @ Theory Ventures (ex-Hex)",
+      "handle": "@BEBischof",
+      "platform": "X",
+      "description": "Co-authored 'Year of Building with LLMs'. Latent Space guest. Practitioner on production LLM evals at Hex. Active Feb 2026.",
+      "inbound": 7,
+      "reading": [
+        {
+          "title": "What We Learned from a Year of Building with LLMs",
+          "url": "https://applied-llms.org/"
+        },
+        {
+          "title": "LLM Evals Done Right (Humanloop)",
+          "url": "https://humanloop.com/blog/LLM-eval-done-right"
+        },
+        {
+          "title": "Notebooks = Chat++ (Latent Space)",
+          "url": "https://www.latent.space/p/bryan-bischof"
+        }
+      ]
+    },
+    {
+      "id": "mark",
+      "name": "Mark Saroufim",
+      "fullName": "Mark Saroufim",
+      "layer": 2,
+      "domains": [
+        "aidev"
+      ],
+      "role": "Engineer @ Meta/PyTorch · GPU MODE founder",
+      "handle": "@marksaroufim",
+      "platform": "X · marksaroufim.com",
+      "description": "Runs GPU MODE community. 'ML: The Great Stagnation' went viral. AI kernel work integrated into vLLM with 40% speedups. Active Mar 2026.",
+      "inbound": 3,
+      "reading": [
+        {
+          "title": "ML: The Great Stagnation",
+          "url": "https://marksaroufim.substack.com/p/machine-learning-the-great-stagnation"
+        },
+        {
+          "title": "PyTorch needs great Systems Engineers",
+          "url": "https://www.marksaroufim.com/2025/04/16/pytorch-needs-great-systems-engineers.html"
+        }
+      ]
+    },
+    {
+      "id": "spolu",
+      "name": "S. Polu",
+      "fullName": "Stanislas Polu",
+      "layer": 2,
+      "domains": [
+        "orchestration"
+      ],
+      "role": "Co-founder & CEO, Dust.tt (ex-OpenAI)",
+      "handle": "@spolu",
+      "platform": "X · dust.tt",
+      "description": "Building Dust — enterprise AI agent platform. Co-appeared with Harrison Chase on The Generalist. GPT-f paper (automated theorem proving). Active Mar 2026.",
+      "inbound": 2,
+      "reading": [
+        {
+          "title": "The Evolution of AI Agents (The Generalist)",
+          "url": "https://www.generalist.com/p/the-evolution-of-ai-agents"
+        }
+      ]
+    },
+    {
+      "id": "max",
+      "name": "Max Woolf",
+      "fullName": "Max Woolf",
+      "layer": 2,
+      "domains": [
+        "aidev",
+        "evals"
+      ],
+      "role": "Senior Data Scientist · Independent writer",
+      "handle": "@minimaxir",
+      "platform": "X · minimaxir.com",
+      "description": "Rigorous AI-assisted dev skeptic. 'AI agent coding skeptic tries agent coding' (Feb 2026) widely shared. Cited by Simon Willison. Active Feb 2026.",
+      "inbound": 1,
+      "reading": [
+        {
+          "title": "AI agent coding skeptic tries agent coding",
+          "url": "https://minimaxir.com/2026/02/ai-agent-coding/"
+        },
+        {
+          "title": "The Problem With LangChain",
+          "url": "https://minimaxir.com/2023/07/langchain-problem/"
+        }
+      ]
+    },
+    {
+      "id": "jesse",
+      "name": "Jesse Vincent",
+      "fullName": "Jesse Vincent",
+      "layer": 2,
+      "domains": [
+        "aidev",
+        "orchestration"
+      ],
+      "role": "Creator of Superpowers · Independent",
+      "handle": "@jesse",
+      "platform": "blog.fsck.com",
+      "description": "Built Superpowers Claude Code plugin (29k+ stars). Pioneered 'Architect/Implementer' pattern for parallel agents. Monthly coding agent workflow series. Active Mar 2026.",
+      "inbound": 1,
+      "reading": [
+        {
+          "title": "Superpowers: How I'm using coding agents",
+          "url": "https://blog.fsck.com/2025/10/09/superpowers/"
+        },
+        {
+          "title": "How I'm using coding agents (Sep 2025)",
+          "url": "https://blog.fsck.com/2025/10/05/how-im-using-coding-agents-in-september-2025/"
+        }
+      ]
+    },
+    {
+      "id": "atai",
+      "name": "Atai Barkai",
+      "fullName": "Atai Barkai",
+      "layer": 2,
+      "domains": [
+        "orchestration",
+        "aidev"
+      ],
+      "role": "Co-founder & CEO, CopilotKit",
+      "handle": "@ataiiam",
+      "platform": "X · copilotkit.ai",
+      "description": "Built AG-UI protocol — adopted by Google, LangChain, AWS, Microsoft. Building the frontend/UI layer for agents. Active Mar 2026.",
+      "inbound": 1,
+      "reading": [
+        {
+          "title": "AG-UI Protocol: Bridging Agents to Any Front End",
+          "url": "https://www.copilotkit.ai/blog/ag-ui-protocol-bridging-agents-to-any-front-end"
+        }
+      ]
+    },
+    {
+      "id": "charlespacker",
+      "name": "C. Packer",
+      "fullName": "Charles Packer",
+      "layer": 2,
+      "domains": [
+        "orchestration",
+        "context"
+      ],
+      "role": "Co-founder & CEO, Letta (MemGPT)",
+      "handle": "@charlespacker",
+      "platform": "X · charlespacker.com",
+      "description": "Created MemGPT — LLMs as operating systems with persistent memory. DeepLearning.AI course on agent memory. Stateful agent architecture pioneer. Active 2026.",
+      "inbound": 2,
+      "reading": [
+        {
+          "title": "MemGPT: Towards LLMs as Operating Systems",
+          "url": "https://arxiv.org/abs/2310.08560"
+        }
+      ]
+    },
+    {
+      "id": "maxime",
+      "name": "M. Labonne",
+      "fullName": "Maxime Labonne",
+      "layer": 2,
+      "domains": [
+        "context",
+        "aidev"
+      ],
+      "role": "Head of Post-Training @ Liquid AI",
+      "handle": "@maximelabonne",
+      "platform": "X · mlabonne.github.io",
+      "description": "LLM Course on GitHub (50k+ stars) — canonical open-source LLM roadmap. Acknowledged in Chip Huyen's AI Engineering book. Active Feb 2026.",
+      "inbound": 2,
+      "reading": [
+        {
+          "title": "LLM Course (GitHub, 50k+ stars)",
+          "url": "https://github.com/mlabonne/llm-course"
+        }
+      ]
+    },
+    {
+      "id": "isaac",
+      "name": "Isaac Flath",
+      "fullName": "Isaac Flath",
+      "layer": 2,
+      "domains": [
+        "aidev",
+        "evals"
+      ],
+      "role": "Builder @ Kentro Tech (ex-Answer.AI)",
+      "handle": "@isaac_flath",
+      "platform": "X · elite-ai-assisted-coding.dev",
+      "description": "Co-authored Devin review with Hamel at Answer.AI. Runs Elite AI Assisted Coding Substack. MCP vs CLI benchmark. Active Jan 2026.",
+      "inbound": 2,
+      "reading": [
+        {
+          "title": "MCP vs CLI Benchmark",
+          "url": "https://elite-ai-assisted-coding.dev/p/mcp-vs-cli-benchmarking"
+        },
+        {
+          "title": "Agents to Do the Things Claude Can't",
+          "url": "https://elite-ai-assisted-coding.dev/p/agents-to-do-the-things-claude-cant"
+        }
+      ]
+    },
+    {
+      "id": "phillip",
+      "name": "Phillip Carter",
+      "fullName": "Phillip Carter",
+      "layer": 2,
+      "domains": [
+        "evals",
+        "aidev"
+      ],
+      "role": "PM Director @ Salesforce (ex-Honeycomb)",
+      "handle": "@_cartermp",
+      "platform": "phillipcarter.dev · Bluesky",
+      "description": "Wrote 'How I Code With LLMs These Days' (viral). O'Reilly book on LLM observability. Featured in Hamel's Field Guide as eval case study. Active Mar 2026.",
+      "inbound": 1,
+      "reading": [
+        {
+          "title": "How I Code With LLMs These Days",
+          "url": "https://www.phillipcarter.dev/posts/coding-with-llms"
+        },
+        {
+          "title": "Observability for LLMs (O'Reilly book)",
+          "url": "https://www.oreilly.com/library/view/observability-for-large/9781098159757/"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "swyx",
+      "target": "alessio",
+      "weight": 3,
+      "label": "Co-hosts Latent Space"
+    },
+    {
+      "source": "swyx",
+      "target": "simon",
+      "weight": 2.5,
+      "label": "Recurring LS guest · AIE keynote best-of-conference 2025"
+    },
+    {
+      "source": "swyx",
+      "target": "harrison",
+      "weight": 2.5,
+      "label": "LS guest · AIE Summit · LangChain community"
+    },
+    {
+      "source": "swyx",
+      "target": "hamel",
+      "weight": 2,
+      "label": "AIE speaker · evals community"
+    },
+    {
+      "source": "swyx",
+      "target": "shreya",
+      "weight": 2,
+      "label": "AIE speaker · evals overlap"
+    },
+    {
+      "source": "swyx",
+      "target": "eugene",
+      "weight": 2,
+      "label": "LS about page endorsement"
+    },
+    {
+      "source": "swyx",
+      "target": "jason",
+      "weight": 2,
+      "label": "Evals community discourse"
+    },
+    {
+      "source": "swyx",
+      "target": "jeremy",
+      "weight": 2,
+      "label": "LS guest · Answer.ai"
+    },
+    {
+      "source": "swyx",
+      "target": "dex",
+      "weight": 2,
+      "label": "AIE Summit · coined context engineering"
+    },
+    {
+      "source": "swyx",
+      "target": "sasha",
+      "weight": 1.5,
+      "label": "AIE World's Fair 2025 keynote"
+    },
+    {
+      "source": "swyx",
+      "target": "beyang",
+      "weight": 1.5,
+      "label": "3x AIE Top Speaker"
+    },
+    {
+      "source": "swyx",
+      "target": "yegge",
+      "weight": 1.5,
+      "label": "AIE Code Summit · IDE talk"
+    },
+    {
+      "source": "swyx",
+      "target": "leerob",
+      "weight": 1.5,
+      "label": "AIE Code Summit · Cursor"
+    },
+    {
+      "source": "swyx",
+      "target": "catasta",
+      "weight": 1.5,
+      "label": "AIE Code Summit · Replit"
+    },
+    {
+      "source": "swyx",
+      "target": "brennan",
+      "weight": 1.5,
+      "label": "AIE Code Summit · OpenHands"
+    },
+    {
+      "source": "swyx",
+      "target": "lance",
+      "weight": 2,
+      "label": "Dedicated LS episode on context engineering"
+    },
+    {
+      "source": "swyx",
+      "target": "chip",
+      "weight": 2,
+      "label": "LS reading list · cited for context + agents"
+    },
+    {
+      "source": "swyx",
+      "target": "nathan",
+      "weight": 1.5,
+      "label": "SAIL Live collab Feb 2026"
+    },
+    {
+      "source": "swyx",
+      "target": "karpathy",
+      "weight": 1.5,
+      "label": "Community discourse · vibe coding era"
+    },
+    {
+      "source": "hamel",
+      "target": "shreya",
+      "weight": 3,
+      "label": "Co-teach AI Evals for Engineers course"
+    },
+    {
+      "source": "harrison",
+      "target": "shreya",
+      "weight": 2,
+      "label": "Research co-author (paper)"
+    },
+    {
+      "source": "harrison",
+      "target": "hamel",
+      "weight": 2,
+      "label": "LangSmith evals collaboration"
+    },
+    {
+      "source": "harrison",
+      "target": "lance",
+      "weight": 2.5,
+      "label": "LangChain colleagues · LS episode"
+    },
+    {
+      "source": "harrison",
+      "target": "dex",
+      "weight": 1.5,
+      "label": "Context / harness engineering discourse"
+    },
+    {
+      "source": "simon",
+      "target": "hamel",
+      "weight": 2,
+      "label": "Cites & amplifies regularly on blog"
+    },
+    {
+      "source": "simon",
+      "target": "eugene",
+      "weight": 1.5,
+      "label": "Mutual amplification"
+    },
+    {
+      "source": "simon",
+      "target": "karpathy",
+      "weight": 2,
+      "label": "39 Karpathy citations on blog 2025-2026"
+    },
+    {
+      "source": "simon",
+      "target": "chip",
+      "weight": 1.5,
+      "label": "Cited in AI engineering discourse"
+    },
+    {
+      "source": "simon",
+      "target": "dbreunig",
+      "weight": 1.5,
+      "label": "Cites context engineering analysis"
+    },
+    {
+      "source": "hamel",
+      "target": "jason",
+      "weight": 1.5,
+      "label": "Evals community discourse"
+    },
+    {
+      "source": "hamel",
+      "target": "chip",
+      "weight": 1.5,
+      "label": "Acknowledged in AI Engineering book"
+    },
+    {
+      "source": "eugene",
+      "target": "shreya",
+      "weight": 1.5,
+      "label": "Evals research overlap"
+    },
+    {
+      "source": "eugene",
+      "target": "chip",
+      "weight": 1.5,
+      "label": "Peer practitioner writing community"
+    },
+    {
+      "source": "jason",
+      "target": "chip",
+      "weight": 1.5,
+      "label": "AI engineering discourse overlap"
+    },
+    {
+      "source": "alessio",
+      "target": "harrison",
+      "weight": 1.5,
+      "label": "LS · agent architecture"
+    },
+    {
+      "source": "beyang",
+      "target": "yegge",
+      "weight": 2,
+      "label": "Sourcegraph colleagues · IDE thesis"
+    },
+    {
+      "source": "sasha",
+      "target": "leerob",
+      "weight": 1.5,
+      "label": "AIE Code Summit · Cursor Composer talk"
+    },
+    {
+      "source": "brennan",
+      "target": "beyang",
+      "weight": 1,
+      "label": "Open source coding agent ecosystem"
+    },
+    {
+      "source": "eno",
+      "target": "brennan",
+      "weight": 1,
+      "label": "Production coding agent discourse"
+    },
+    {
+      "source": "catasta",
+      "target": "eno",
+      "weight": 1,
+      "label": "Autonomous agent design discourse"
+    },
+    {
+      "source": "dbreunig",
+      "target": "lance",
+      "weight": 2.5,
+      "label": "'How Contexts Fail' cited in Lance's LS episode"
+    },
+    {
+      "source": "dbreunig",
+      "target": "dex",
+      "weight": 1.5,
+      "label": "Context engineering term overlap"
+    },
+    {
+      "source": "nathan",
+      "target": "hamel",
+      "weight": 1.5,
+      "label": "Evals / post-training practitioner overlap"
+    },
+    {
+      "source": "nathan",
+      "target": "chip",
+      "weight": 1,
+      "label": "AI engineering evals overlap"
+    },
+    {
+      "source": "karpathy",
+      "target": "yegge",
+      "weight": 1.5,
+      "label": "AI-assisted dev discourse · vibe coding era"
+    },
+    {
+      "source": "karpathy",
+      "target": "leerob",
+      "weight": 1,
+      "label": "Coding agent ecosystem"
+    },
+    {
+      "source": "chip",
+      "target": "harrison",
+      "weight": 1.5,
+      "label": "AI engineering ecosystem"
+    },
+    {
+      "source": "simon",
+      "target": "carlini",
+      "weight": 2,
+      "label": "18 tagged posts on simonwillison.net"
+    },
+    {
+      "source": "simon",
+      "target": "geoffrey",
+      "weight": 2,
+      "label": "12 tagged posts · malleable software discourse"
+    },
+    {
+      "source": "simon",
+      "target": "max",
+      "weight": 1.5,
+      "label": "Cited AI agent coding skepticism"
+    },
+    {
+      "source": "simon",
+      "target": "jesse",
+      "weight": 1.5,
+      "label": "Cited parallel agent workflow patterns"
+    },
+    {
+      "source": "harrison",
+      "target": "spolu",
+      "weight": 2,
+      "label": "Co-appeared on The Generalist · agent infra discourse"
+    },
+    {
+      "source": "harrison",
+      "target": "atai",
+      "weight": 1.5,
+      "label": "AG-UI protocol adopted by LangChain"
+    },
+    {
+      "source": "harrison",
+      "target": "addy",
+      "weight": 1.5,
+      "label": "Context engineering framing overlap"
+    },
+    {
+      "source": "chip",
+      "target": "charlesfrye",
+      "weight": 1.5,
+      "label": "Acknowledged in AI Engineering book"
+    },
+    {
+      "source": "chip",
+      "target": "omar",
+      "weight": 1.5,
+      "label": "DSPy featured in AI Engineering book"
+    },
+    {
+      "source": "chip",
+      "target": "charlespacker",
+      "weight": 1,
+      "label": "MemGPT discussed in AI Engineering book"
+    },
+    {
+      "source": "chip",
+      "target": "maxime",
+      "weight": 1,
+      "label": "Acknowledged in AI Engineering book"
+    },
+    {
+      "source": "chip",
+      "target": "mark",
+      "weight": 1,
+      "label": "Acknowledged in AI Engineering book"
+    },
+    {
+      "source": "hamel",
+      "target": "charlesfrye",
+      "weight": 2.5,
+      "label": "Co-authored 'Year of Building with LLMs'"
+    },
+    {
+      "source": "hamel",
+      "target": "bryan",
+      "weight": 2.5,
+      "label": "Co-authored 'Year of Building with LLMs'"
+    },
+    {
+      "source": "hamel",
+      "target": "isaac",
+      "weight": 2,
+      "label": "Co-authored Devin review at Answer.AI"
+    },
+    {
+      "source": "hamel",
+      "target": "phillip",
+      "weight": 1.5,
+      "label": "Featured Honeycomb as eval case study"
+    },
+    {
+      "source": "eugene",
+      "target": "charlesfrye",
+      "weight": 2,
+      "label": "Co-authored 'Year of Building with LLMs'"
+    },
+    {
+      "source": "eugene",
+      "target": "bryan",
+      "weight": 2,
+      "label": "Co-authored 'Year of Building with LLMs'"
+    },
+    {
+      "source": "jason",
+      "target": "charlesfrye",
+      "weight": 2,
+      "label": "Co-authored 'Year of Building with LLMs'"
+    },
+    {
+      "source": "jason",
+      "target": "bryan",
+      "weight": 2,
+      "label": "Co-authored 'Year of Building with LLMs'"
+    },
+    {
+      "source": "shreya",
+      "target": "charlesfrye",
+      "weight": 2,
+      "label": "Co-authored 'Year of Building with LLMs'"
+    },
+    {
+      "source": "shreya",
+      "target": "bryan",
+      "weight": 2,
+      "label": "Co-authored 'Year of Building with LLMs'"
+    },
+    {
+      "source": "charlesfrye",
+      "target": "bryan",
+      "weight": 2.5,
+      "label": "Co-authored 'Year of Building with LLMs'"
+    },
+    {
+      "source": "sasha",
+      "target": "omar",
+      "weight": 1.5,
+      "label": "DSPy ecosystem collaboration"
+    },
+    {
+      "source": "jeremy",
+      "target": "isaac",
+      "weight": 1.5,
+      "label": "Answer.AI colleagues"
+    },
+    {
+      "source": "swyx",
+      "target": "bryan",
+      "weight": 1.5,
+      "label": "LS guest · Notebooks = Chat++"
+    },
+    {
+      "source": "bryan",
+      "target": "dex",
+      "weight": 1,
+      "label": "Humanloop LLM eval interview"
+    },
+    {
+      "source": "mark",
+      "target": "hamel",
+      "weight": 1.5,
+      "label": "Guest speaker in Mastering LLMs course"
+    },
+    {
+      "source": "spolu",
+      "target": "swyx",
+      "weight": 1.5,
+      "label": "LS guest · Agents @ Work: Dust.tt"
+    },
+    {
+      "source": "omar",
+      "target": "harrison",
+      "weight": 1.5,
+      "label": "Joint DSPy x LangChain webinar"
+    },
+    {
+      "source": "omar",
+      "target": "swyx",
+      "weight": 1.5,
+      "label": "Speaker at AIE World's Fair 2025"
+    },
+    {
+      "source": "charlesfrye",
+      "target": "swyx",
+      "weight": 1.5,
+      "label": "Speaker at AIE World's Fair"
+    },
+    {
+      "source": "addy",
+      "target": "simon",
+      "weight": 1.5,
+      "label": "Simon reviewed Beyond Vibe Coding book"
+    },
+    {
+      "source": "charlespacker",
+      "target": "harrison",
+      "weight": 1,
+      "label": "Competitor frameworks · Data+AI Summit 2024"
+    },
+    {
+      "source": "mark",
+      "target": "charlesfrye",
+      "weight": 1.5,
+      "label": "Co-speakers in Mastering LLMs course"
+    },
+    {
+      "source": "maxime",
+      "target": "swyx",
+      "weight": 1,
+      "label": "Co-contributors to Turing Post 2025 predictions"
+    }
+  ]
+}
