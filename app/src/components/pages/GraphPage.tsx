@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import * as d3 from "d3";
 import { Maximize2, X } from "lucide-react";
 import graphData from "../../graph-data.json";
-import { DOMAINS, getDomColor, LAYER_LABEL_COLORS } from "../../lib/constants";
+import { DOMAINS, getDomColor, LAYER_LABEL_COLORS, APP_VERSION } from "../../lib/constants";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import type { Person, Edge, DomainKey } from "../../lib/types";
 
@@ -362,7 +362,7 @@ export function GraphPage() {
             </div>
           )}
           <div className="text-sm md:text-lg font-bold text-text-primary tracking-wide whitespace-nowrap font-mono">
-            {isMobile ? "AIE MAP" : "NETWORK GRAPH"} v0.3 · {visibleCounts.nodes}/{PEOPLE.length} NODES · {visibleCounts.edges}/{EDGES.length} EDGES
+            {isMobile ? "AIE MAP" : "NETWORK GRAPH"} {APP_VERSION} · {visibleCounts.nodes}/{PEOPLE.length} NODES · {visibleCounts.edges}/{EDGES.length} EDGES
           </div>
         </div>
         <div className="flex gap-1.5 md:gap-3 items-center shrink-0">
@@ -554,7 +554,10 @@ function DossierContent({
       <div className="flex items-start justify-between">
         <div>
           <div className="text-lg font-bold text-text-primary mb-0.5">{sp.name}</div>
-          <div className="text-xs text-text-muted mb-3">{sp.fullName}</div>
+          {sp.fullName !== sp.name && (
+            <div className="text-xs text-text-muted mb-3">{sp.fullName}</div>
+          )}
+          {sp.fullName === sp.name && <div className="mb-3" />}
         </div>
         <ExpandButton personId={sp.id} />
       </div>
@@ -579,7 +582,14 @@ function DossierContent({
       </div>
       <div className="border-t border-border-subtle pt-2.5 mb-3">
         <div className="text-label font-mono text-text-muted tracking-[0.12em] mb-1.5">FIND THEM</div>
-        <div className="text-sm text-accent">{sp.handle}</div>
+        <a
+          href={`https://x.com/${sp.handle.replace('@', '')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-accent hover:text-accent-hover transition-colors"
+        >
+          {sp.handle}
+        </a>
         <div className="text-xs text-text-muted mt-0.5">{sp.platform}</div>
       </div>
       {sp.reading && sp.reading.length > 0 && (
