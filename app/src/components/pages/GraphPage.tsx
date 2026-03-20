@@ -349,14 +349,6 @@ export function GraphPage() {
       return n;
     });
 
-  if (loading) {
-    return (
-      <div className="flex flex-col flex-1 items-center justify-center">
-        <div className="text-sm font-mono text-text-muted tracking-wider">LOADING GRAPH DATA...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col flex-1 overflow-hidden">
       {/* HEADER */}
@@ -445,14 +437,17 @@ export function GraphPage() {
       )}
 
       {/* MAIN GRAPH AREA */}
-      <div className="flex flex-1 relative overflow-hidden">
-        <div ref={containerRef} className="flex-1 relative overflow-hidden">
+      <div className="flex flex-1 relative overflow-hidden min-h-0">
+        <div ref={containerRef} className="flex-1 relative overflow-hidden min-h-0 min-w-0">
           <svg
             ref={svgRef}
-            width={dims.w}
-            height={dims.h}
-            className="block touch-none"
+            className="block touch-none absolute inset-0 w-full h-full"
           />
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-bg/80 z-raised">
+              <div className="text-sm font-mono text-text-muted tracking-wider">LOADING GRAPH DATA...</div>
+            </div>
+          )}
           {hoveredEdge && !isMobile && (
             <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 bg-[rgba(5,9,15,0.97)] border border-border-emphasis px-4 py-1.5 text-xs font-mono text-text-secondary pointer-events-none whitespace-nowrap tracking-tight">
               <span className="text-text-muted">
