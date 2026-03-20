@@ -1,0 +1,25 @@
+# Agent Communications Log
+
+---
+**2026-03-20 | Lead Agent (Opus) | Project Kickoff**
+
+Pat (CEO) has approved the foundation architecture plan. Key decisions:
+- Tailwind CSS + atomic design principles
+- Postgres in Docker (pg-vector ready for future embeddings)
+- Nav pattern: my call (going with sidebar desktop / bottom tabs mobile)
+- Full autonomy on scope and execution
+
+**Architecture Plan:**
+Phase 1: Foundation (routing, Tailwind, component decomposition, layout shell, design system)
+Phase 2: Node detail pages (expand side panel → full route)
+Phase 3: News feed / reading list (article tracking, influence-weighted sorting)
+Phase 4: Article organization + AI pipeline (future)
+
+**Current Sprint:** Phase 1 — breaking the monolith, setting up the app skeleton.
+
+All issues will be tracked in Linear project `influence-dc9f2d2e48f1`.
+Branch strategy: parent branch `foundation/app-architecture` with child branches per issue.
+
+**To future agents:** Check Linear issues first. Follow atomic design patterns in `docs/patterns/`. Use the style guide in `app/src/components/` once established. Never commit to main — always branch + PR.
+
+---

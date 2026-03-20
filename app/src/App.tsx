@@ -200,7 +200,7 @@ export default function App() {
       .join("g")
       .style("cursor", "pointer")
       .call(
-        d3
+        (d3
           .drag<SVGGElement, any>()
           .on("start", (ev, d) => {
             if (!ev.active) sim.alphaTarget(0.3).restart();
@@ -215,7 +215,7 @@ export default function App() {
             if (!ev.active) sim.alphaTarget(0);
             d.fx = null;
             d.fy = null;
-          }),
+          })) as any,
       )
       .on("click", (ev, d: any) => {
         ev.stopPropagation();
@@ -319,7 +319,7 @@ export default function App() {
         .attr("y2", (d: any) => d.target.y);
       nodeG.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
     });
-    return () => sim.stop();
+    return () => { sim.stop(); };
   }, [domFilters, layerFilter, dims, isMobile]);
 
   const sp = PEOPLE.find((p) => p.id === selected?.id);
