@@ -1,0 +1,13 @@
+{
+  "name": "influence-map",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "db:seed": "bun db/seed.ts",
+    "api:dev": "cd api && bun run dev",
+    "app:dev": "cd app && bun run dev"
+  },
+  "dependencies": {
+    "postgres": "^3.4.5"
+  }
+}
