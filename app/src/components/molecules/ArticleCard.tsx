@@ -9,7 +9,7 @@ interface ArticleCardProps {
   onCategoryChange: (id: number, category: string) => void;
 }
 
-const CATEGORIES = ["Valuable", "Reference", "Skip"] as const;
+const CATEGORIES = ["Valuable", "Reference", "Tool", "Skip"] as const;
 
 export function ArticleCard({ article, onStatusChange, onCategoryChange }: ArticleCardProps) {
   const navigate = useNavigate();
