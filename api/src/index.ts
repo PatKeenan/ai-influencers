@@ -328,6 +328,37 @@ app.delete("/api/notes/:id", async (c) => {
   return c.json({ success: true });
 });
 
+// ---------- Proxy (iframe reader experiment) ----------
+
+app.get("/api/proxy", async (c) => {
+  const url = c.req.query("url");
+  if (!url) return c.json({ error: "url parameter required" }, 400);
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; InfluenceReader/1.0)",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      },
+    });
+
+    const html = await response.text();
+
+    // Inject a <base> tag so relative URLs resolve correctly
+    const baseTag = `<base href="${url}">`;
+    const modifiedHtml = html.replace(/<head([^>]*)>/i, `<head$1>${baseTag}`);
+
+    return new Response(modifiedHtml, {
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Frame-Options": "SAMEORIGIN",
+      },
+    });
+  } catch {
+    return c.json({ error: "Failed to fetch URL" }, 502);
+  }
+});
+
 // ---------- Start ----------
 
 const port = parseInt(process.env.PORT ?? "3001", 10);
