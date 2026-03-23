@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from "react-router";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, BookOpen } from "lucide-react";
 import { DOMAINS, getDomColor } from "../../lib/constants";
 import { useGraphData } from "../../hooks/useGraphData";
+import { findArticleByUrl } from "../../lib/api";
 import type { DomainKey } from "../../lib/types";
 
 export function PersonPage() {
@@ -106,18 +107,7 @@ export function PersonPage() {
             </h2>
             <div className="flex flex-col gap-2">
               {person.reading.map((r, i) => (
-                <a
-                  key={i}
-                  href={r.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start gap-2 p-3 rounded-md border border-border hover:border-border-emphasis bg-bg-raised/50 hover:bg-bg-raised transition-all duration-[var(--transition-base)] group no-underline"
-                >
-                  <span className="text-sm text-accent group-hover:text-accent-hover flex-1 leading-snug">
-                    {r.title}
-                  </span>
-                  <ExternalLink className="w-3.5 h-3.5 text-text-muted shrink-0 mt-0.5" />
-                </a>
+                <PersonReadingLink key={i} url={r.url} title={r.title} />
               ))}
             </div>
           </div>
@@ -176,5 +166,33 @@ export function PersonPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function PersonReadingLink({ url, title }: { url: string; title: string }) {
+  const navigate = useNavigate();
+  const handleClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const article = await findArticleByUrl(url);
+    if (article) {
+      navigate(`/read/${article.id}`);
+    } else {
+      window.open(url, "_blank");
+    }
+  };
+  return (
+    <button
+      onClick={handleClick}
+      className="flex items-start gap-2 p-3 rounded-md border border-border hover:border-border-emphasis bg-bg-raised/50 hover:bg-bg-raised transition-all duration-[var(--transition-base)] group no-underline cursor-pointer text-left w-full"
+    >
+      <BookOpen className="w-3.5 h-3.5 text-text-muted group-hover:text-accent shrink-0 mt-0.5" />
+      <span className="text-sm text-accent group-hover:text-accent-hover flex-1 leading-snug">
+        {title}
+      </span>
+      <ExternalLink
+        className="w-3.5 h-3.5 text-text-muted shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={(e) => { e.stopPropagation(); window.open(url, "_blank"); }}
+      />
+    </button>
   );
 }

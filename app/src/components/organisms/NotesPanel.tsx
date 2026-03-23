@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Loader2, Check } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { Loader2, Check, Bold, Italic, Strikethrough, Code, List, ListOrdered, Quote, Minus, Undo2, Redo2 } from "lucide-react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import { BubbleMenu } from "@tiptap/react/menus";
+import StarterKit from "@tiptap/starter-kit";
+import Placeholder from "@tiptap/extension-placeholder";
+import Link from "@tiptap/extension-link";
+import { Markdown } from "tiptap-markdown";
 import { fetchNotes, saveNote } from "../../lib/api";
 import type { Note } from "../../lib/types";
 
@@ -13,12 +17,52 @@ interface NotesPanelProps {
 
 export function NotesPanel({ articleId }: NotesPanelProps) {
   const [_notes, setNotes] = useState<Note[]>([]);
-  const [noteContent, setNoteContent] = useState("");
   const [activeNoteId, setActiveNoteId] = useState<number | undefined>();
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [initialContent, setInitialContent] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeNoteIdRef = useRef<number | undefined>(undefined);
+  activeNoteIdRef.current = activeNoteId;
+
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [
+      StarterKit.configure({
+        heading: { levels: [1, 2, 3] },
+      }),
+      Placeholder.configure({
+        placeholder: "Start typing notes...",
+      }),
+      Link.configure({
+        openOnClick: true,
+        autolink: true,
+      }),
+      Markdown,
+    ],
+    content: initialContent || "",
+    editorProps: {
+      attributes: {
+        class: "prose-editor focus:outline-none min-h-[150px] p-3",
+      },
+    },
+    onUpdate: ({ editor: ed }) => {
+      const markdown = (ed.storage as any).markdown?.getMarkdown?.() ?? ed.getHTML();
+      if (markdown.trim()) {
+        debouncedSave(markdown, activeNoteIdRef.current);
+      }
+    },
+  });
+
+  // Set content when initial data loads
+  useEffect(() => {
+    if (editor && initialContent !== null && !loaded) {
+      editor.commands.setContent(initialContent);
+      setLoaded(true);
+    }
+  }, [editor, initialContent, loaded]);
 
   // Fetch notes
   useEffect(() => {
@@ -29,8 +73,10 @@ export function NotesPanel({ articleId }: NotesPanelProps) {
       const data = await fetchNotes(articleId);
       if (!cancelled && data.length > 0) {
         setNotes(data);
-        setNoteContent(data[0].content);
         setActiveNoteId(data[0].id);
+        setInitialContent(data[0].content);
+      } else if (!cancelled) {
+        setInitialContent("");
       }
     }
 
@@ -78,57 +124,93 @@ export function NotesPanel({ articleId }: NotesPanelProps) {
     };
   }, []);
 
-  const handleNoteChange = (value: string) => {
-    setNoteContent(value);
-    if (value.trim()) {
-      debouncedSave(value, activeNoteId);
-    }
-  };
-
-  // Handle tab key in textarea
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Tab") {
-      e.preventDefault();
-      const textarea = e.currentTarget;
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-
-      if (e.shiftKey) {
-        const beforeCursor = noteContent.substring(0, start);
-        const lineStart = beforeCursor.lastIndexOf("\n") + 1;
-        const linePrefix = noteContent.substring(lineStart, start);
-        if (linePrefix.startsWith("  ")) {
-          const newContent = noteContent.substring(0, lineStart) + noteContent.substring(lineStart + 2);
-          setNoteContent(newContent);
-          const newPos = Math.max(lineStart, start - 2);
-          requestAnimationFrame(() => {
-            textarea.selectionStart = newPos;
-            textarea.selectionEnd = newPos;
-          });
-          debouncedSave(newContent, activeNoteId);
-        }
-      } else {
-        const newContent = noteContent.substring(0, start) + "  " + noteContent.substring(end);
-        setNoteContent(newContent);
-        requestAnimationFrame(() => {
-          textarea.selectionStart = start + 2;
-          textarea.selectionEnd = start + 2;
-        });
-        debouncedSave(newContent, activeNoteId);
-      }
-    }
-  };
-
   return (
-    <div className="flex flex-col h-full bg-bg border-l border-border p-4 overflow-hidden">
-      {/* Notes header */}
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-label font-mono text-text-muted tracking-[0.12em] uppercase">NOTES</h2>
+    <div className="flex flex-col h-full bg-bg border-l border-border overflow-hidden">
+      {/* Toolbar */}
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border shrink-0">
+        <div className="flex items-center gap-0.5">
+          <ToolbarButton
+            onClick={() => editor?.chain().focus().toggleBold().run()}
+            active={editor?.isActive("bold")}
+            title="Bold (Cmd+B)"
+          >
+            <Bold className="w-3.5 h-3.5" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor?.chain().focus().toggleItalic().run()}
+            active={editor?.isActive("italic")}
+            title="Italic (Cmd+I)"
+          >
+            <Italic className="w-3.5 h-3.5" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor?.chain().focus().toggleStrike().run()}
+            active={editor?.isActive("strike")}
+            title="Strikethrough"
+          >
+            <Strikethrough className="w-3.5 h-3.5" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor?.chain().focus().toggleCode().run()}
+            active={editor?.isActive("code")}
+            title="Inline code"
+          >
+            <Code className="w-3.5 h-3.5" />
+          </ToolbarButton>
+
+          <div className="w-px h-4 bg-border mx-1" />
+
+          <ToolbarButton
+            onClick={() => editor?.chain().focus().toggleBulletList().run()}
+            active={editor?.isActive("bulletList")}
+            title="Bullet list"
+          >
+            <List className="w-3.5 h-3.5" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+            active={editor?.isActive("orderedList")}
+            title="Numbered list"
+          >
+            <ListOrdered className="w-3.5 h-3.5" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor?.chain().focus().toggleBlockquote().run()}
+            active={editor?.isActive("blockquote")}
+            title="Quote"
+          >
+            <Quote className="w-3.5 h-3.5" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor?.chain().focus().setHorizontalRule().run()}
+            title="Horizontal rule"
+          >
+            <Minus className="w-3.5 h-3.5" />
+          </ToolbarButton>
+
+          <div className="w-px h-4 bg-border mx-1" />
+
+          <ToolbarButton
+            onClick={() => editor?.chain().focus().undo().run()}
+            disabled={!editor?.can().undo()}
+            title="Undo (Cmd+Z)"
+          >
+            <Undo2 className="w-3.5 h-3.5" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor?.chain().focus().redo().run()}
+            disabled={!editor?.can().redo()}
+            title="Redo (Cmd+Shift+Z)"
+          >
+            <Redo2 className="w-3.5 h-3.5" />
+          </ToolbarButton>
+        </div>
+
         <div className="flex items-center gap-2">
           {saveStatus === "saving" && (
             <span className="flex items-center gap-1 text-label font-mono text-text-muted tracking-wider">
               <Loader2 className="w-3 h-3 animate-spin" />
-              SAVING...
+              SAVING
             </span>
           )}
           {saveStatus === "saved" && (
@@ -137,52 +219,111 @@ export function NotesPanel({ articleId }: NotesPanelProps) {
               SAVED
             </span>
           )}
+          {lastSaved && saveStatus === "idle" && (
+            <span className="text-label font-mono text-text-muted tracking-wider">
+              {lastSaved.toLocaleTimeString()}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Last saved timestamp */}
-      {lastSaved && (
-        <div className="text-label font-mono text-text-muted tracking-wider mb-3">
-          Last saved {lastSaved.toLocaleTimeString()}
-        </div>
-      )}
-
-      {/* Editor */}
-      <textarea
-        value={noteContent}
-        onChange={(e) => handleNoteChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Start typing notes... (Markdown supported)"
-        className="flex-1 min-h-[150px] bg-bg-raised/50 border border-border rounded-md p-3 font-mono text-sm text-text-secondary resize-none focus:outline-none focus:border-border-emphasis transition-colors placeholder:text-text-muted"
-      />
-
-      {/* Preview */}
-      {noteContent.trim() && (
-        <div className="mt-3 flex-1 overflow-y-auto">
-          <div className="text-label font-mono text-text-muted tracking-[0.12em] uppercase mb-2">PREVIEW</div>
-          <div
-            className="text-sm text-text-secondary leading-relaxed
-              [&_h1]:text-lg [&_h1]:font-bold [&_h1]:text-text-primary [&_h1]:mb-2 [&_h1]:mt-4
-              [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-text-primary [&_h2]:mb-2 [&_h2]:mt-3
-              [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:text-text-primary [&_h3]:mb-1 [&_h3]:mt-2
-              [&_p]:mb-2 [&_p]:text-sm
-              [&_a]:text-accent [&_a]:hover:text-accent-hover [&_a]:underline
-              [&_ul]:mb-2 [&_ul]:pl-5 [&_ul]:list-disc
-              [&_ol]:mb-2 [&_ol]:pl-5 [&_ol]:list-decimal
-              [&_li]:mb-0.5 [&_li]:text-sm
-              [&_blockquote]:border-l-2 [&_blockquote]:border-accent/30 [&_blockquote]:pl-3 [&_blockquote]:my-2 [&_blockquote]:text-text-tertiary [&_blockquote]:italic
-              [&_code]:bg-bg-overlay [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs [&_code]:font-mono [&_code]:text-accent/80
-              [&_pre]:bg-bg-overlay [&_pre]:p-3 [&_pre]:rounded-md [&_pre]:overflow-x-auto [&_pre]:mb-2
-              [&_pre_code]:bg-transparent [&_pre_code]:p-0
-              [&_hr]:border-border [&_hr]:my-3
-              [&_table]:w-full [&_table]:border-collapse [&_table]:mb-2 [&_table]:text-xs
-              [&_th]:border [&_th]:border-border [&_th]:p-1.5 [&_th]:text-left [&_th]:text-text-primary [&_th]:bg-bg-overlay
-              [&_td]:border [&_td]:border-border [&_td]:p-1.5"
-          >
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{noteContent}</ReactMarkdown>
+      {/* Bubble menu (appears on text selection) */}
+      {editor && (
+        <BubbleMenu editor={editor}>
+          <div className="flex items-center gap-0.5 bg-bg-raised border border-border-emphasis rounded-md shadow-lg p-1">
+            <BubbleButton
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              active={editor.isActive("bold")}
+            >
+              <Bold className="w-3 h-3" />
+            </BubbleButton>
+            <BubbleButton
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+              active={editor.isActive("italic")}
+            >
+              <Italic className="w-3 h-3" />
+            </BubbleButton>
+            <BubbleButton
+              onClick={() => editor.chain().focus().toggleStrike().run()}
+              active={editor.isActive("strike")}
+            >
+              <Strikethrough className="w-3 h-3" />
+            </BubbleButton>
+            <BubbleButton
+              onClick={() => editor.chain().focus().toggleCode().run()}
+              active={editor.isActive("code")}
+            >
+              <Code className="w-3 h-3" />
+            </BubbleButton>
           </div>
-        </div>
+        </BubbleMenu>
       )}
+
+      {/* Editor area */}
+      <div className="flex-1 overflow-y-auto">
+        <EditorContent editor={editor} className="h-full" />
+      </div>
+
+      {/* Notes label */}
+      <div className="px-3 py-1.5 border-t border-border shrink-0">
+        <span className="text-label font-mono text-text-muted tracking-wider">
+          NOTES · MARKDOWN
+        </span>
+      </div>
     </div>
+  );
+}
+
+function ToolbarButton({
+  onClick,
+  active,
+  disabled,
+  title,
+  children,
+}: {
+  onClick: () => void;
+  active?: boolean;
+  disabled?: boolean;
+  title?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      className={`p-1.5 rounded transition-all duration-[var(--transition-fast)] cursor-pointer ${
+        active
+          ? "bg-accent/15 text-accent"
+          : disabled
+            ? "text-text-faint cursor-not-allowed"
+            : "text-text-muted hover:text-text-secondary hover:bg-surface-hover"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function BubbleButton({
+  onClick,
+  active,
+  children,
+}: {
+  onClick: () => void;
+  active?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`p-1 rounded transition-all duration-[var(--transition-fast)] cursor-pointer ${
+        active
+          ? "bg-accent/20 text-accent"
+          : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
+      }`}
+    >
+      {children}
+    </button>
   );
 }

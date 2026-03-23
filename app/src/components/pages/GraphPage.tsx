@@ -5,6 +5,7 @@ import { Maximize2, X } from "lucide-react";
 import { DOMAINS, getDomColor, LAYER_LABEL_COLORS, APP_VERSION } from "../../lib/constants";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useGraphData } from "../../hooks/useGraphData";
+import { findArticleByUrl } from "../../lib/api";
 import type { Person, Edge, DomainKey } from "../../lib/types";
 
 export function GraphPage() {
@@ -469,7 +470,7 @@ export function GraphPage() {
 
         {/* DOSSIER — side panel on desktop */}
         {sp && !isMobile && (
-          <div className="w-72 bg-surface border-l border-border p-4 overflow-y-auto shrink-0">
+          <div className="w-[540px] bg-surface border-l border-border p-5 overflow-y-auto shrink-0">
             <DossierContent sp={sp} spEdges={spEdges} people={people} onClose={() => setSelected(null)} isMobile={false} onSelectPerson={(p) => setSelected(p)} />
           </div>
         )}
@@ -509,6 +510,26 @@ export function GraphPage() {
         </div>
       )}
     </div>
+  );
+}
+
+function ReadingItemLink({ url, title }: { url: string; title: string }) {
+  const navigate = useNavigate();
+  const handleClick = async () => {
+    const article = await findArticleByUrl(url);
+    if (article) {
+      navigate(`/read/${article.id}`);
+    } else {
+      window.open(url, "_blank");
+    }
+  };
+  return (
+    <button
+      onClick={handleClick}
+      className="block text-xs text-accent mb-1.5 no-underline leading-snug hover:text-accent-hover transition-colors duration-[var(--transition-fast)] cursor-pointer bg-transparent border-0 p-0 text-left"
+    >
+      {title}
+    </button>
   );
 }
 
@@ -601,15 +622,7 @@ function DossierContent({
             READING ({sp.reading.length})
           </div>
           {sp.reading.map((r, i) => (
-            <a
-              key={i}
-              href={r.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-xs text-accent mb-1.5 no-underline leading-snug hover:text-accent-hover transition-colors duration-[var(--transition-fast)]"
-            >
-              {r.title}
-            </a>
+            <ReadingItemLink key={i} url={r.url} title={r.title} />
           ))}
         </div>
       )}
