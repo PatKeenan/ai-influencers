@@ -1,4 +1,5 @@
-import { ExternalLink, Eye, EyeOff, Archive } from "lucide-react";
+import { useNavigate } from "react-router";
+import { ExternalLink, BookOpen, Eye, EyeOff, Archive } from "lucide-react";
 import { DOMAINS } from "../../lib/constants";
 import type { Article, DomainKey } from "../../lib/types";
 
@@ -11,6 +12,7 @@ interface ArticleCardProps {
 const CATEGORIES = ["Valuable", "Reference", "Skip"] as const;
 
 export function ArticleCard({ article, onStatusChange, onCategoryChange }: ArticleCardProps) {
+  const navigate = useNavigate();
   const primaryDomain = article.author_domains?.[0] as DomainKey | undefined;
   const domainConfig = primaryDomain ? DOMAINS[primaryDomain] : null;
 
@@ -19,14 +21,22 @@ export function ArticleCard({ article, onStatusChange, onCategoryChange }: Artic
       {/* Top row: title + influence score */}
       <div className="flex items-start gap-3">
         <div className="flex-1 min-w-0">
+          <button
+            onClick={() => navigate(`/read/${article.id}`)}
+            className="text-sm text-accent hover:text-accent-hover transition-colors leading-snug inline-flex items-start gap-1.5 no-underline group cursor-pointer text-left bg-transparent p-0 border-0"
+          >
+            <BookOpen className="w-3.5 h-3.5 shrink-0 mt-0.5 opacity-50 group-hover:opacity-100" />
+            <span className="group-hover:underline">{article.title}</span>
+          </button>
           <a
             href={article.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-accent hover:text-accent-hover transition-colors leading-snug inline-flex items-start gap-1.5 no-underline group"
+            className="inline-flex items-center gap-1 text-label text-text-muted hover:text-accent transition-colors no-underline mt-1"
+            onClick={(e) => e.stopPropagation()}
           >
-            <span className="group-hover:underline">{article.title}</span>
-            <ExternalLink className="w-3.5 h-3.5 shrink-0 mt-0.5 opacity-50 group-hover:opacity-100" />
+            <ExternalLink className="w-3 h-3" />
+            <span>Open original</span>
           </a>
         </div>
 
