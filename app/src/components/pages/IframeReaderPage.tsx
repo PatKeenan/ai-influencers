@@ -1,11 +1,12 @@
 import { useParams, useNavigate } from "react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, ExternalLink, FileText, StickyNote, Loader2, Monitor, BookOpen } from "lucide-react";
 import DOMPurify from "dompurify";
-import { fetchArticleContent } from "../../lib/api";
+import { fetchArticleContent, fetchArticles, updateArticle } from "../../lib/api";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { NotesPanel } from "../organisms/NotesPanel";
-import type { ArticleContent } from "../../lib/types";
+import { ReaderActions } from "../organisms/ReaderActions";
+import type { Article, ArticleContent } from "../../lib/types";
 
 type MobileTab = "article" | "notes";
 type ReaderMode = "iframe" | "reader";
@@ -41,6 +42,11 @@ export function IframeReaderPage() {
   // Reader mode toggle
   const [readerMode, setReaderMode] = useState<ReaderMode>(getStoredMode);
 
+  // Article queue for navigation
+  const [articleQueue, setArticleQueue] = useState<Article[]>([]);
+  const [currentStatus, setCurrentStatus] = useState<Article["status"]>("unread");
+  const [currentCategory, setCurrentCategory] = useState<string | null>(null);
+
   // Fetch article content (needed for title, url, and extracted content fallback)
   useEffect(() => {
     if (!id) return;
@@ -63,11 +69,118 @@ export function IframeReaderPage() {
     return () => { cancelled = true; };
   }, [id]);
 
+  // Fetch the article queue for navigation
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadQueue() {
+      try {
+        const articles = await fetchArticles({ sort: "influence" });
+        if (!cancelled && Array.isArray(articles)) {
+          setArticleQueue(articles);
+          // Set current article's status and category from the queue
+          const current = articles.find((a: Article) => a.id === id);
+          if (current) {
+            setCurrentStatus(current.status);
+            setCurrentCategory(current.category);
+          }
+        }
+      } catch {
+        // Queue fetch is non-critical — navigation just won't work
+      }
+    }
+
+    loadQueue();
+    return () => { cancelled = true; };
+  }, [id]);
+
   // Reset iframe state when article changes
   useEffect(() => {
     setIframeLoaded(false);
     setIframeError(false);
   }, [article?.url]);
+
+  // Compute navigation
+  const currentIndex = articleQueue.findIndex((a) => a.id === id);
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex >= 0 && currentIndex < articleQueue.length - 1;
+
+  const navigatePrev = useCallback(() => {
+    if (hasPrev) {
+      navigate(`/read/${articleQueue[currentIndex - 1].id}`);
+    }
+  }, [hasPrev, articleQueue, currentIndex, navigate]);
+
+  const navigateNext = useCallback(() => {
+    if (hasNext) {
+      navigate(`/read/${articleQueue[currentIndex + 1].id}`);
+    }
+  }, [hasNext, articleQueue, currentIndex, navigate]);
+
+  // Keyboard shortcuts: left/right arrows for prev/next
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      // Don't intercept if user is typing in an editor or input
+      const active = document.activeElement;
+      if (
+        active &&
+        (active.tagName === "INPUT" ||
+          active.tagName === "TEXTAREA" ||
+          active.getAttribute("contenteditable") === "true" ||
+          active.closest(".ProseMirror"))
+      ) {
+        return;
+      }
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        navigatePrev();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        navigateNext();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [navigatePrev, navigateNext]);
+
+  // Status change handler
+  const handleStatusChange = useCallback(
+    async (status: Article["status"]) => {
+      try {
+        await updateArticle(id, { status });
+        setCurrentStatus(status);
+        // Update the queue locally
+        setArticleQueue((prev) =>
+          prev.map((a) => (a.id === id ? { ...a, status } : a))
+        );
+      } catch {
+        // Silently fail — user will see the old status
+      }
+    },
+    [id]
+  );
+
+  // Category change handler
+  const handleCategoryChange = useCallback(
+    async (category: string) => {
+      // Toggle: if already selected, deselect
+      const newCategory = currentCategory === category ? null : category;
+      try {
+        await updateArticle(id, { category: newCategory ?? "" });
+        setCurrentCategory(newCategory);
+        setArticleQueue((prev) =>
+          prev.map((a) =>
+            a.id === id ? { ...a, category: newCategory } : a
+          )
+        );
+      } catch {
+        // Silently fail
+      }
+    },
+    [id, currentCategory]
+  );
 
   const toggleReaderMode = () => {
     const next: ReaderMode = readerMode === "iframe" ? "reader" : "iframe";
@@ -77,7 +190,11 @@ export function IframeReaderPage() {
     } catch { /* ignore */ }
   };
 
-  /** Sanitize extracted HTML to prevent XSS — uses DOMPurify for safe rendering */
+  /**
+   * Sanitize extracted HTML to prevent XSS.
+   * Uses DOMPurify which is already a project dependency.
+   * All user-supplied HTML passes through this before rendering.
+   */
   function sanitizeHtml(html: string): string {
     return DOMPurify.sanitize(html, {
       USE_PROFILES: { html: true },
@@ -219,6 +336,23 @@ export function IframeReaderPage() {
 
   const articlePanel = readerMode === "iframe" ? iframePanel : extractedPanel;
 
+  // Reader actions component shared between mobile and desktop
+  const readerActions = (
+    <ReaderActions
+      articleId={id}
+      currentStatus={currentStatus}
+      currentCategory={currentCategory}
+      onStatusChange={handleStatusChange}
+      onCategoryChange={handleCategoryChange}
+      currentIndex={currentIndex >= 0 ? currentIndex : 0}
+      totalCount={articleQueue.length}
+      onPrev={navigatePrev}
+      onNext={navigateNext}
+      hasPrev={hasPrev}
+      hasNext={hasNext}
+    />
+  );
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Top bar */}
@@ -310,10 +444,20 @@ export function IframeReaderPage() {
 
       {/* Content area */}
       {isMobile ? (
-        <div className="flex-1 overflow-hidden">
-          {mobileTab === "article" ? articlePanel : (
-            <div className="h-full">
-              <NotesPanel articleId={id} />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {mobileTab === "article" ? (
+            <>
+              <div className="flex-1 overflow-hidden">
+                {articlePanel}
+              </div>
+              {readerActions}
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex-1 overflow-hidden">
+                <NotesPanel articleId={id} />
+              </div>
+              {readerActions}
             </div>
           )}
         </div>
@@ -322,8 +466,11 @@ export function IframeReaderPage() {
           <div className="w-[70%] overflow-hidden flex flex-col border-r border-border shadow-[2px_0_8px_rgba(0,0,0,0.3)]">
             {articlePanel}
           </div>
-          <div className="w-[30%] min-w-[280px]">
-            <NotesPanel articleId={id} />
+          <div className="w-[30%] min-w-[280px] flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-hidden">
+              <NotesPanel articleId={id} />
+            </div>
+            {readerActions}
           </div>
         </div>
       )}
