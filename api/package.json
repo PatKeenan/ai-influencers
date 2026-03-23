@@ -8,6 +8,7 @@
     "start": "bun run src/index.ts"
   },
   "dependencies": {
+    "@extractus/article-extractor": "^8.0.20",
     "hono": "^4.7.0",
     "postgres": "^3.4.5"
   },

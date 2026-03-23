@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { extract } from "@extractus/article-extractor";
 import sql from "./db";
 
 const app = new Hono();
@@ -168,6 +169,163 @@ app.patch("/api/articles/:id", async (c) => {
   }
 
   return c.json(updated);
+});
+
+// ---------- Article Content Extraction ----------
+
+app.get("/api/articles/:id/content", async (c) => {
+  const id = parseInt(c.req.param("id"), 10);
+
+  const [article] = await sql`
+    SELECT id, url, title, extracted_content AS "extractedContent",
+           extracted_at AS "extractedAt"
+    FROM articles
+    WHERE id = ${id}
+  `;
+
+  if (!article) {
+    return c.json({ error: "Article not found" }, 404);
+  }
+
+  // Return cached content if available
+  if (article.extractedContent) {
+    return c.json({
+      id: article.id,
+      title: article.title,
+      url: article.url,
+      content: article.extractedContent,
+      extracted_at: article.extractedAt,
+    });
+  }
+
+  // Extract content from the URL
+  try {
+    const result = await extract(article.url);
+
+    if (!result || !result.content) {
+      return c.json({
+        id: article.id,
+        title: article.title,
+        url: article.url,
+        content: null,
+        error: "Could not extract content",
+      });
+    }
+
+    // Cache the extracted content
+    const [updated] = await sql`
+      UPDATE articles SET
+        extracted_content = ${result.content},
+        extracted_at = NOW(),
+        updated_at = NOW()
+      WHERE id = ${id}
+      RETURNING extracted_at AS "extractedAt"
+    `;
+
+    return c.json({
+      id: article.id,
+      title: result.title ?? article.title,
+      url: article.url,
+      content: result.content,
+      extracted_at: updated.extractedAt,
+    });
+  } catch {
+    return c.json({
+      id: article.id,
+      title: article.title,
+      url: article.url,
+      content: null,
+      error: "Could not extract content",
+    });
+  }
+});
+
+// ---------- Notes ----------
+
+app.get("/api/articles/:id/notes", async (c) => {
+  const articleId = parseInt(c.req.param("id"), 10);
+
+  // Verify article exists
+  const [article] = await sql`
+    SELECT id FROM articles WHERE id = ${articleId}
+  `;
+
+  if (!article) {
+    return c.json({ error: "Article not found" }, 404);
+  }
+
+  const notes = await sql`
+    SELECT id, article_id AS "articleId", content,
+           created_at AS "createdAt", updated_at AS "updatedAt"
+    FROM notes
+    WHERE article_id = ${articleId}
+    ORDER BY created_at ASC
+  `;
+
+  return c.json(notes);
+});
+
+app.post("/api/articles/:id/notes", async (c) => {
+  const articleId = parseInt(c.req.param("id"), 10);
+  const body = await c.req.json();
+
+  // Verify article exists
+  const [article] = await sql`
+    SELECT id FROM articles WHERE id = ${articleId}
+  `;
+
+  if (!article) {
+    return c.json({ error: "Article not found" }, 404);
+  }
+
+  const content = body.content ?? "";
+
+  const [note] = await sql`
+    INSERT INTO notes (article_id, content)
+    VALUES (${articleId}, ${content})
+    RETURNING id, article_id AS "articleId", content,
+              created_at AS "createdAt", updated_at AS "updatedAt"
+  `;
+
+  return c.json(note, 201);
+});
+
+app.put("/api/notes/:id", async (c) => {
+  const id = parseInt(c.req.param("id"), 10);
+  const body = await c.req.json();
+
+  if (body.content === undefined) {
+    return c.json({ error: "content is required" }, 400);
+  }
+
+  const [note] = await sql`
+    UPDATE notes SET
+      content = ${body.content},
+      updated_at = NOW()
+    WHERE id = ${id}
+    RETURNING id, article_id AS "articleId", content,
+              created_at AS "createdAt", updated_at AS "updatedAt"
+  `;
+
+  if (!note) {
+    return c.json({ error: "Note not found" }, 404);
+  }
+
+  return c.json(note);
+});
+
+app.delete("/api/notes/:id", async (c) => {
+  const id = parseInt(c.req.param("id"), 10);
+
+  const [note] = await sql`
+    DELETE FROM notes WHERE id = ${id} RETURNING id
+  `;
+
+  if (!note) {
+    return c.json({ error: "Note not found" }, 404);
+  }
+
+  return c.json({ success: true });
 });
 
 // ---------- Start ----------
