@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { ExternalLink, Eye, EyeOff, Archive } from "lucide-react";
+import { ExternalLink, BookOpen, Eye, EyeOff, Archive } from "lucide-react";
 import { DOMAINS } from "../../lib/constants";
 import type { Article, DomainKey } from "../../lib/types";
 
@@ -23,19 +23,20 @@ export function ArticleCard({ article, onStatusChange, onCategoryChange }: Artic
         <div className="flex-1 min-w-0">
           <button
             onClick={() => navigate(`/read/${article.id}`)}
-            className="text-sm text-accent hover:text-accent-hover transition-colors leading-snug inline-flex items-start gap-1.5 no-underline group cursor-pointer text-left bg-transparent border-none p-0"
+            className="text-sm text-accent hover:text-accent-hover transition-colors leading-snug inline-flex items-start gap-1.5 no-underline group cursor-pointer text-left bg-transparent p-0 border-0"
           >
+            <BookOpen className="w-3.5 h-3.5 shrink-0 mt-0.5 opacity-50 group-hover:opacity-100" />
             <span className="group-hover:underline">{article.title}</span>
           </button>
           <a
             href={article.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 mt-0.5 text-text-muted hover:text-text-secondary transition-colors"
-            title="Open original article"
+            className="inline-flex items-center gap-1 text-label text-text-muted hover:text-accent transition-colors no-underline mt-1"
             onClick={(e) => e.stopPropagation()}
           >
-            <ExternalLink className="w-3.5 h-3.5" />
+            <ExternalLink className="w-3 h-3" />
+            <span>Open original</span>
           </a>
         </div>
 
