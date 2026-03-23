@@ -54,6 +54,18 @@ export async function updateArticle(id: number, updates: { status?: string; cate
   return res.json();
 }
 
+export async function findArticleByUrl(url: string): Promise<{ id: number } | null> {
+  try {
+    const res = await fetch(`${API_BASE}/articles?url=${encodeURIComponent(url)}`);
+    if (!res.ok) return null;
+    const articles = await res.json();
+    if (Array.isArray(articles) && articles.length > 0) return { id: articles[0].id };
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchArticleContent(id: number): Promise<ArticleContent> {
   const res = await fetch(`${API_BASE}/articles/${id}/content`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);

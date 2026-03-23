@@ -140,7 +140,7 @@ export function IframeReaderPage() {
         <iframe
           src={proxyUrl}
           className={`w-full h-full border-0 ${iframeLoaded ? "opacity-100" : "opacity-0"}`}
-          sandbox="allow-same-origin allow-scripts allow-popups"
+          sandbox="allow-same-origin allow-popups"
           title={article?.title ?? "Article"}
           onLoad={() => setIframeLoaded(true)}
           onError={() => setIframeError(true)}

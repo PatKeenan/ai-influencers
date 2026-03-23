@@ -95,7 +95,24 @@ app.get("/api/people/:id", async (c) => {
 
 app.get("/api/articles", async (c) => {
   const status = c.req.query("status");
+  const urlFilter = c.req.query("url");
   const sort = c.req.query("sort") ?? "influence";
+
+  // Quick lookup by URL
+  if (urlFilter) {
+    const results = await sql`
+      SELECT a.id, a.url, a.title, a.author_id AS "authorId",
+             p.name AS "authorName",
+             a.published_at AS "publishedAt", a.status, a.category,
+             a.influence_score AS "influenceScore",
+             a.created_at AS "createdAt", a.updated_at AS "updatedAt"
+      FROM articles a
+      LEFT JOIN people p ON a.author_id = p.id
+      WHERE a.url = ${urlFilter}
+      LIMIT 1
+    `;
+    return c.json(results);
+  }
   const limit = parseInt(c.req.query("limit") ?? "50", 10);
   const offset = parseInt(c.req.query("offset") ?? "0", 10);
 
@@ -337,8 +354,9 @@ app.get("/api/proxy", async (c) => {
   try {
     const response = await fetch(url, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; InfluenceReader/1.0)",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
       },
     });
 
@@ -346,12 +364,25 @@ app.get("/api/proxy", async (c) => {
 
     // Inject a <base> tag so relative URLs resolve correctly
     const baseTag = `<base href="${url}">`;
-    const modifiedHtml = html.replace(/<head([^>]*)>/i, `<head$1>${baseTag}`);
+    let modifiedHtml = html.replace(/<head([^>]*)>/i, `<head$1>${baseTag}`);
+
+    // Strip CSP meta tags that block iframe embedding
+    modifiedHtml = modifiedHtml.replace(
+      /<meta[^>]*content-security-policy[^>]*>/gi,
+      ""
+    );
+    // Strip frame-busting scripts (e.g., if (top !== self) top.location = ...)
+    modifiedHtml = modifiedHtml.replace(
+      /if\s*\(\s*(?:top|window\.top|parent)\s*!==?\s*(?:self|window\.self|window)\s*\)[^;]*;/gi,
+      ""
+    );
 
     return new Response(modifiedHtml, {
       headers: {
         "Content-Type": "text/html; charset=utf-8",
-        "X-Frame-Options": "SAMEORIGIN",
+        // Explicitly allow framing from our origin, no CSP restrictions
+        "X-Frame-Options": "ALLOWALL",
+        "Content-Security-Policy": "",
       },
     });
   } catch {
