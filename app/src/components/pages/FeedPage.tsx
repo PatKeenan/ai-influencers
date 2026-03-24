@@ -44,7 +44,7 @@ function buildArticlesFromStaticData(): Article[] {
 export function FeedPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("unread");
   const [sortMode, setSortMode] = useState<SortMode>("influence");
   const [usingApi, setUsingApi] = useState(false);
 
