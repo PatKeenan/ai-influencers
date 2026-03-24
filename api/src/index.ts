@@ -259,6 +259,58 @@ app.get("/api/articles/:id/content", async (c) => {
 
 // ---------- Notes ----------
 
+app.get("/api/notes", async (c) => {
+  const search = c.req.query("q");
+  const limit = parseInt(c.req.query("limit") ?? "100", 10);
+  const offset = parseInt(c.req.query("offset") ?? "0", 10);
+
+  let notes;
+  if (search) {
+    notes = await sql`
+      SELECT n.id, n.content, n.created_at AS "createdAt", n.updated_at AS "updatedAt",
+             n.article_id AS "articleId",
+             a.title AS "articleTitle", a.url AS "articleUrl", a.status AS "articleStatus",
+             a.category AS "articleCategory",
+             a.author_id AS "authorId",
+             p.name AS "authorName",
+             p.domains AS "authorDomains"
+      FROM notes n
+      JOIN articles a ON n.article_id = a.id
+      LEFT JOIN people p ON a.author_id = p.id
+      WHERE n.content ILIKE ${"%" + search + "%"}
+      ORDER BY n.updated_at DESC
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+  } else {
+    notes = await sql`
+      SELECT n.id, n.content, n.created_at AS "createdAt", n.updated_at AS "updatedAt",
+             n.article_id AS "articleId",
+             a.title AS "articleTitle", a.url AS "articleUrl", a.status AS "articleStatus",
+             a.category AS "articleCategory",
+             a.author_id AS "authorId",
+             p.name AS "authorName",
+             p.domains AS "authorDomains"
+      FROM notes n
+      JOIN articles a ON n.article_id = a.id
+      LEFT JOIN people p ON a.author_id = p.id
+      ORDER BY n.updated_at DESC
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+  }
+
+  return c.json(notes);
+});
+
+app.get("/api/notes/stats", async (c) => {
+  const stats = await sql`
+    SELECT COUNT(*)::int AS total,
+           COUNT(DISTINCT article_id)::int AS "articlesWithNotes"
+    FROM notes
+    WHERE content != ''
+  `;
+  return c.json(stats[0]);
+});
+
 app.get("/api/articles/:id/notes", async (c) => {
   const articleId = parseInt(c.req.param("id"), 10);
 
