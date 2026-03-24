@@ -54,7 +54,7 @@ export function FeedPage() {
 
     async function fetchArticles() {
       try {
-        const res = await fetch("/api/articles?sort=influence&status=unread");
+        const res = await fetch("/api/articles?sort=influence");
         if (!res.ok) throw new Error("API unavailable");
         const data = await res.json();
         if (!cancelled && Array.isArray(data) && data.length > 0) {
