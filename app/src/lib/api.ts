@@ -1,4 +1,4 @@
-import type { Person, Edge, GraphData, ArticleContent, Note } from "./types";
+import type { Person, Edge, GraphData, ArticleContent, Note, NoteWithArticle } from "./types";
 import graphDataFallback from "../graph-data.json";
 
 const API_BASE = "/api";
@@ -97,4 +97,18 @@ export async function saveNote(articleId: number, content: string, noteId?: numb
 
 export async function deleteNote(noteId: number): Promise<void> {
   await fetch(`${API_BASE}/notes/${noteId}`, { method: "DELETE" });
+}
+
+export async function fetchAllNotes(params?: { q?: string; limit?: number; offset?: number }): Promise<NoteWithArticle[]> {
+  const searchParams = new URLSearchParams();
+  if (params?.q) searchParams.set("q", params.q);
+  if (params?.limit) searchParams.set("limit", String(params.limit));
+  if (params?.offset) searchParams.set("offset", String(params.offset));
+  try {
+    const res = await fetch(`${API_BASE}/notes?${searchParams}`);
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
 }

@@ -3,6 +3,7 @@ import { AppLayout } from "./components/templates/AppLayout";
 import { GraphPage } from "./components/pages/GraphPage";
 import { PersonPage } from "./components/pages/PersonPage";
 import { FeedPage } from "./components/pages/FeedPage";
+import { NotebookPage } from "./components/pages/NotebookPage";
 import { IframeReaderPage } from "./components/pages/IframeReaderPage";
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
           <Route index element={<GraphPage />} />
           <Route path="person/:id" element={<PersonPage />} />
           <Route path="feed" element={<FeedPage />} />
+          <Route path="notebook" element={<NotebookPage />} />
           <Route path="read/:articleId" element={<IframeReaderPage />} />
         </Route>
       </Routes>

@@ -1,11 +1,12 @@
 import { Outlet, NavLink, useLocation } from "react-router";
-import { Network, Rss } from "lucide-react";
+import { Network, Rss, BookOpen } from "lucide-react";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { APP_VERSION } from "../../lib/constants";
 
 const NAV_ITEMS = [
   { to: "/", icon: Network, label: "Graph", end: true },
   { to: "/feed", icon: Rss, label: "Feed" },
+  { to: "/notebook", icon: BookOpen, label: "Notes" },
 ] as const;
 
 export function AppLayout() {
