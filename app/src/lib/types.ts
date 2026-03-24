@@ -72,6 +72,22 @@ export interface ArticleContent {
   error?: string;
 }
 
+/** A note with its parent article context, for the notebook view */
+export interface NoteWithArticle {
+  id: number;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  articleId: number;
+  articleTitle: string;
+  articleUrl: string;
+  articleStatus: string;
+  articleCategory: string | null;
+  authorId: string;
+  authorName: string;
+  authorDomains: string[] | null;
+}
+
 /** The full graph data structure */
 export interface GraphData {
   people: Person[];
