@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "db:seed": "bun db/seed.ts",
+    "db:seed-feeds": "bun db/seed-feeds.ts",
     "api:dev": "cd api && bun run dev",
-    "app:dev": "cd app && bun run dev"
+    "app:dev": "cd app && bun run dev",
+    "pipeline:check": "bun pipeline/check-feeds.ts",
+    "pipeline:cron": "bun pipeline/cron.ts"
   },
   "dependencies": {
     "postgres": "^3.4.5"
